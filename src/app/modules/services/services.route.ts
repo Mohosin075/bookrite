@@ -2,8 +2,8 @@ import express from 'express';
 import auth from '../../middlewares/auth';
 import { USER_ROLES } from '../../../enums/user';
 import validateRequest from '../../middlewares/validateRequest';
-import { createProductZodSchema } from './products.validation';
-import { productController } from './products.controller';
+import { createServiceZodSchema } from './services.validation';
+import { productController } from './services.controller';
 
 const router = express.Router();
 
@@ -11,21 +11,21 @@ router
   .route('/')
   .post(
     auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.ADMIN),
-    validateRequest(createProductZodSchema),
-    productController.createProduct
+    validateRequest(createServiceZodSchema),
+    productController.createService
   )
-  .get(productController.getProducts);
+  .get(productController.getServices);
 
 router
   .route('/:id')
-  .get(productController.getSingleProducts)
+  .get(productController.getSingleServices)
   .patch(
     auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.ADMIN),
-    productController.updateProducts
+    productController.updateServices
   )
   .delete(
     auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.ADMIN),
-    productController.deleteProducts
+    productController.deleteServices
   );
 
 export const productRoutes = router;

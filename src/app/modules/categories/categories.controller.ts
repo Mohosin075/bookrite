@@ -3,10 +3,13 @@ import { CategoryServices } from './categories.service';
 import sendResponse from '../../../shared/sendResponse';
 import { StatusCodes } from 'http-status-codes';
 import catchAsync from '../../../shared/catchAsync';
+import { getSingleFilePath } from '../../../shared/getFilePath';
 
 const createCategory = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const data = req.body;
+    let image = getSingleFilePath(req.files, 'image');
+    const data = { ...req.body, image };
+
     const result = await CategoryServices.createCategoryToDB(data);
 
     sendResponse(res, {

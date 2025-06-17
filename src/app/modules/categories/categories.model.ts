@@ -9,8 +9,9 @@ const categorySchema = new Schema<ICategory, CategoryModel>(
       required: true,
       trim: true,
     },
-    description: {
+    image: {
       type: String,
+      default: 'https://i.ibb.co/z5YHLV9/profile.png',
     },
   },
   {
