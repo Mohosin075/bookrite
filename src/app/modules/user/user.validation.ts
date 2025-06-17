@@ -20,7 +20,13 @@ const updateUserZodSchema = z.object({
   image: z.string().optional(),
 });
 
+
+const accessLocationZodSchema = z.object({
+  islocationGranted: z.boolean().optional(),
+});
+
 export const UserValidation = {
   createUserZodSchema,
   updateUserZodSchema,
+  accessLocationZodSchema
 };

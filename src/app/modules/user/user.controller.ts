@@ -52,4 +52,24 @@ const updateProfile = catchAsync(
   }
 );
 
-export const UserController = { createUser, getUserProfile, updateProfile };
+
+//accessLocation
+const accessLocation = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const user = req.user;
+
+    const data = {
+      ...req.body,
+    };
+    const result = await UserService.accessLocationToDB(user, data);
+
+    sendResponse(res, {
+      success: true,
+      statusCode: StatusCodes.OK,
+      message: 'access location data updated successfully',
+      data: result,
+    });
+  }
+);
+
+export const UserController = { createUser, getUserProfile, updateProfile, accessLocation };

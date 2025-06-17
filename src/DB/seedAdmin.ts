@@ -7,6 +7,7 @@ const payload = {
   name: 'Administrator',
   email: config.super_admin.email,
   role: USER_ROLES.SUPER_ADMIN,
+  islocationGranted: false,
   password: config.super_admin.password,
   verified: true,
 };
@@ -17,13 +18,12 @@ export const seedSuperAdmin = async () => {
     role: USER_ROLES.SUPER_ADMIN,
   });
 
-   try {
+  try {
     if (!isExistSuperAdmin) {
-    await User.create(payload);
-    logger.info('✨ Super Admin account has been successfully created!');
+      await User.create(payload);
+      logger.info('✨ Super Admin account has been successfully created!');
+    }
+  } catch (error) {
+    console.log({ error });
   }
-   } catch (error) {
-    console.log({error})
-   }
 };
-

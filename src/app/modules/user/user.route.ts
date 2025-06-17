@@ -30,4 +30,16 @@ router
     UserController.createUser
   );
 
+router
+  .route('/access-location')
+  .patch(
+    auth(
+      USER_ROLES.SUPER_ADMIN,
+      USER_ROLES.ADMIN,
+      USER_ROLES.USER,
+      USER_ROLES.PROVIDER
+    ), validateRequest(UserValidation.accessLocationZodSchema),
+    UserController.accessLocation
+  );
+
 export const UserRoutes = router;

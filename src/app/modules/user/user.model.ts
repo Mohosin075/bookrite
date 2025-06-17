@@ -29,6 +29,13 @@ const userSchema = new Schema<IUser, UserModal>(
       select: 0,
       minlength: 8,
     },
+    address: {
+      type: String,
+    },
+    islocationGranted: {
+      type: Boolean,
+      required: true,
+    },
     image: {
       type: String,
       default: 'https://i.ibb.co/z5YHLV9/profile.png',
