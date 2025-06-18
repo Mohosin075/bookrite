@@ -49,6 +49,16 @@ const userSchema = new Schema<IUser, UserModal>(
       type: Boolean,
       default: false,
     },
+    bookmarks: [{ type: Schema.Types.ObjectId, ref: 'Service' }],
+    bankAccount: {
+      accountNumber: String,
+      bankName: String,
+      routingNumber: String,
+    },
+    plan: {
+      type: { type: String },
+      expiresAt: Date,
+    },
     authentication: {
       type: {
         isResetPassword: {

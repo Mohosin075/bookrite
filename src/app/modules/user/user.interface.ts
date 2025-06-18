@@ -1,4 +1,4 @@
-import { Model } from 'mongoose';
+import mongoose, { Model } from 'mongoose';
 import { USER_ROLES } from '../../../enums/user';
 
 export type IUser = {
@@ -12,6 +12,16 @@ export type IUser = {
   image?: string;
   status: 'active' | 'delete';
   verified: boolean;
+  bookmarks?: mongoose.Types.ObjectId[];
+  bankAccount?: {
+    accountNumber: string;
+    bankName: string;
+    routingNumber: string;
+  };
+  plan?: {
+    type: string;
+    expiresAt: Date;
+  };
   authentication?: {
     isResetPassword: boolean;
     oneTimeCode: number;
