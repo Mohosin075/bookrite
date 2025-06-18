@@ -50,6 +50,20 @@ const getSingleServices = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+
+const getServiceByCategory = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+ const result = await ServiceServices.getServicesByCategoryFromDB(id);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.OK,
+    message: 'Service data retrieved successfully.',
+    data: result,
+  });
+});
+
 const updateServices = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
 
@@ -80,6 +94,7 @@ const deleteServices = catchAsync(async (req: Request, res: Response) => {
 
 export const serviceController = {
   createService,
+  getServiceByCategory,
   getServices,
   getSingleServices,
   updateServices,
