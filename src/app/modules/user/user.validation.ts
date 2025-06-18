@@ -12,14 +12,11 @@ const createUserZodSchema = z.object({
 });
 
 const updateUserZodSchema = z.object({
-  name: z.string().optional(),
-  contact: z.string().optional(),
-  email: z.string().optional(),
-  password: z.string().optional(),
-  location: z.string().optional(),
+  name: z.string().min(1),
+  contact: z.string().min(1),
+  address: z.string().min(1),
   image: z.string().optional(),
 });
-
 
 const accessLocationZodSchema = z.object({
   islocationGranted: z.boolean().optional(),
@@ -28,5 +25,5 @@ const accessLocationZodSchema = z.object({
 export const UserValidation = {
   createUserZodSchema,
   updateUserZodSchema,
-  accessLocationZodSchema
+  accessLocationZodSchema,
 };
