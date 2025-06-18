@@ -3,12 +3,16 @@ import catchAsync from '../../../shared/catchAsync';
 import { ServiceServices } from './services.service';
 import sendResponse from '../../../shared/sendResponse';
 import { StatusCodes } from 'http-status-codes';
+import { getSingleFilePath } from '../../../shared/getFilePath';
 
 const createService = catchAsync(async (req: Request, res: Response) => {
   const userId = req.user.id;
 
+  let image = getSingleFilePath(req.files, 'image');
+
   const data = {
     ...req.body,
+    image,
     createdBy: userId,
   };
 
@@ -74,7 +78,7 @@ const deleteServices = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-export const productController = {
+export const serviceController = {
   createService,
   getServices,
   getSingleServices,

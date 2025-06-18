@@ -18,3 +18,14 @@ export const createServiceZodSchema = z.object({
     isActive: z.boolean().optional(),
   }),
 });
+
+export const updateServiceZodSchema = z.object({
+  body: z.object({
+    name: z.string().min(3).optional(),
+    description: z.string().optional(),
+    price: z.number().gt(0).optional(),
+    image: z.string().optional(),
+    tags: z.array(z.string()).optional(),
+    isActive: z.boolean().optional(),
+  }),
+});

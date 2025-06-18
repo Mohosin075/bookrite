@@ -7,12 +7,12 @@ const serviceSchema = new Schema<IService, ServiceModel>(
     description: { type: String },
     price: { type: Number, required: true },
     category: { type: Schema.Types.ObjectId, ref: 'Category', required: true },
-    provider: { type: Schema.Types.ObjectId, ref: 'User' },
-    image: { type: String, required : true },
+    provider: { type: Schema.Types.ObjectId, ref: 'User', required : true },
+    image: { type: String, required: true },
     tags: [{ type: String }],
     isActive: { type: Boolean, default: true },
-    isTrending : { type: Boolean, default: false },
-    isRecommended : { type: Boolean, default: false },
+    isTrending: { type: Boolean, default: false },
+    isRecommended: { type: Boolean, default: false },
   },
   { timestamps: true }
 );
