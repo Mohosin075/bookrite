@@ -48,4 +48,8 @@ router
     serviceController.deleteServices
   );
 
+
+  router
+  .route('/category/:id').get(serviceController.getServiceByCategory)
+
 export const productRoutes = router;

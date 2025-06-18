@@ -29,6 +29,16 @@ const getServicesFromDB = async (query: Record<string, any>) => {
   };
 };
 
+const getServicesByCategoryFromDB = async (id: string) => {
+  const isExistServices = await Service.find({ category: id }).populate('category').populate('provider');
+
+  if (isExistServices.length === 0) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, 'Service doesnt exist!');
+  }
+
+  return isExistServices;
+};
+
 const getSingleServiceFromDB = async (id: string) => {
   const isExistServices = await Service.findById(id);
   if (!isExistServices) {
@@ -59,6 +69,7 @@ const deleteServiceFromDB = async (id: string) => {
 export const ServiceServices = {
   createServiceFromDB,
   getServicesFromDB,
+  getServicesByCategoryFromDB,
   getSingleServiceFromDB,
   updateServiceFromDB,
   deleteServiceFromDB,
