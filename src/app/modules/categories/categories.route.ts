@@ -12,11 +12,6 @@ const router = express.Router();
 
 router
   .route('/')
-  // .post(
-  //   auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.ADMIN),
-  //   validateRequest(createCategoryZodSchema),
-  //   CategoryController.createCategory
-  // )
   .post(
     auth(
       USER_ROLES.SUPER_ADMIN,
