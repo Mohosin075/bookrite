@@ -11,7 +11,17 @@ export type IService = {
   isActive?: boolean;
   rating?: number;
   isTrending?: boolean;
-  isRecommended? : boolean;
+  isRecommended?: boolean;
+};
+// TODO
+export type IPortfolio = {
+  provider: Types.ObjectId;
+  service: Types.ObjectId;
+  name: string;
+  image: string;
+  thumbnails : string[];
+  description: string;
 };
 
 export type ServiceModel = Model<IService>;
+export type Portfoli0Model = Model<IPortfolio>;
