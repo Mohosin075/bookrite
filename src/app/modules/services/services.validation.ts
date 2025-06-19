@@ -29,3 +29,20 @@ export const updateServiceZodSchema = z.object({
     isActive: z.boolean().optional(),
   }),
 });
+
+
+export const createPortfolioZodSchema = z.object({
+  provider: objectId(),
+  name: z.string().min(1, "Name is required"),
+  image: z.string().optional(),
+  description: z.string().min(1, "Description is required"),
+  thumbnails: z.array(z.string()).optional(),
+});
+
+
+export const updatePortfolioZodSchema = z.object({
+  name: z.string().min(1, "Name is required").optional(),
+  image: z.string().optional(),
+  description: z.string().min(1, "Description is required").optional(),
+  thumbnails: z.array(z.string()).optional(),
+});

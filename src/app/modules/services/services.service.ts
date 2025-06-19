@@ -1,8 +1,10 @@
 import { StatusCodes } from 'http-status-codes';
 import ApiError from '../../../errors/ApiError';
-import { IService } from './services.interface';
-import { Service } from './services.model';
+import { IPortfolio, IService } from './services.interface';
+import { Portfolio, Service } from './services.model';
 import QueryBuilder from '../../builder/QueryBuilder';
+import { JwtPayload } from 'jsonwebtoken';
+import { Types } from 'mongoose';
 
 const createServiceFromDB = async (data: IService) => {
   return await Service.create(data);
@@ -30,7 +32,9 @@ const getServicesFromDB = async (query: Record<string, any>) => {
 };
 
 const getServicesByCategoryFromDB = async (id: string) => {
-  const isExistServices = await Service.find({ category: id }).populate('category').populate('provider');
+  const isExistServices = await Service.find({ category: id })
+    .populate('category')
+    .populate('provider');
 
   if (isExistServices.length === 0) {
     throw new ApiError(StatusCodes.BAD_REQUEST, 'Service doesnt exist!');
@@ -66,6 +70,62 @@ const deleteServiceFromDB = async (id: string) => {
   return await Service.findByIdAndDelete(id);
 };
 
+// for portfolio
+
+// Create a portfolio
+const createPortfolioFromDB = async (data: IPortfolio, user: JwtPayload) => {
+  return await Portfolio.create({ ...data, provider: user.id });
+};
+
+const getPortfoliosByProviderFromDB = async (provider: string) => {
+  const providerObjectId = new Types.ObjectId(provider);
+  const isExistPortfolios = await Portfolio.find({
+    provider: providerObjectId,
+  }).populate('provider');
+
+  if (isExistPortfolios.length === 0) {
+    throw new ApiError(
+      StatusCodes.BAD_REQUEST,
+      'No portfolios found for the provided service!'
+    );
+  }
+
+  return isExistPortfolios;
+};
+
+// Get a single portfolio by ID
+const getSinglePortfolioFromDB = async (id: string) => {
+  const portfolio = await Portfolio.findById(id).populate('provider');
+  if (!portfolio) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, "Portfolio doesn't exist!");
+  }
+
+  return portfolio;
+};
+
+// Update a portfolio by ID
+const updatePortfolioFromDB = async (
+  id: string,
+  payload: Partial<IPortfolio>
+) => {
+  const portfolio = await Portfolio.findById(id);
+  if (!portfolio) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, "Portfolio doesn't exist!");
+  }
+
+  return await Portfolio.findByIdAndUpdate(id, payload, { new: true });
+};
+
+// Delete a portfolio by ID
+const deletePortfolioFromDB = async (id: string) => {
+  const portfolio = await Portfolio.findById(id);
+  if (!portfolio) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, "Portfolio doesn't exist!");
+  }
+
+  return await Portfolio.findByIdAndDelete(id);
+};
+
 export const ServiceServices = {
   createServiceFromDB,
   getServicesFromDB,
@@ -73,4 +133,10 @@ export const ServiceServices = {
   getSingleServiceFromDB,
   updateServiceFromDB,
   deleteServiceFromDB,
+
+  createPortfolioFromDB,
+  getPortfoliosByProviderFromDB,
+  getSinglePortfolioFromDB,
+  updatePortfolioFromDB,
+  deletePortfolioFromDB,
 };
