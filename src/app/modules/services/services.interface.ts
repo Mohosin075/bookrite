@@ -13,13 +13,12 @@ export type IService = {
   isTrending?: boolean;
   isRecommended?: boolean;
 };
-// TODO
+
 export type IPortfolio = {
   provider: Types.ObjectId;
-  service: Types.ObjectId;
   name: string;
   image: string;
-  thumbnails : string[];
+  thumbnails: string[];
   description: string;
 };
 

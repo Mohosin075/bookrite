@@ -22,14 +22,12 @@ const serviceSchema = new Schema<IService, ServiceModel>(
   { timestamps: true }
 );
 
-// TODO
+
 const portfolioSchema = new Schema<IPortfolio, Portfoli0Model>(
   {
-    provider: { type: Types.ObjectId, ref: 'User', required: true },
-    service: { type: Types.ObjectId, ref: 'Service', required: true },
+    provider: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     name: { type: String, required: true },
     image: { type: String },
-    
     description: { type: String, required: true },
   },
   { timestamps: true }
