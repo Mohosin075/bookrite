@@ -132,98 +132,18 @@ const getSingleBookingFromDB = async (id: string) => {
 
 type ProviderStatus = Extract<IBooking['status'], 'accepted' | 'rejected'>;
 
-
 // TODO
 const updateBookingStatusFromDB = async (
   bookingId: string,
   status: ProviderStatus,
   providerId: string // 🔐 Passed from auth middleware
-) => {
-  if (status !== 'accepted' && status !== 'rejected') {
-    throw new ApiError(StatusCodes.BAD_REQUEST, 'Invalid status for provider!');
-  }
-  const booking = await Booking.findById(bookingId);
-  if (!booking) {
-    throw new ApiError(StatusCodes.NOT_FOUND, 'Booking not found!');
-  }
-
-  const service = await Service.findById(booking.service);
-  if (!service) {
-    throw new ApiError(StatusCodes.NOT_FOUND, 'Associated service not found!');
-  }
-
-  if (String(service.provider) !== String(providerId)) {
-    throw new ApiError(
-      StatusCodes.FORBIDDEN,
-      'Only the provider can update this booking!'
-    );
-  }
-
-  // Update booking status
-  booking.status = status;
-
-  // Update time slot status
-  const availability = service.availability?.find(
-    item => item.date === booking.date
-  );
-  const timeSlot = availability?.startTimes.find(
-    slot => slot.start === booking.startTime
-  );
-
-  if (timeSlot) {
-    timeSlot.status = status;
-    if (status === 'rejected') {
-      timeSlot.isBooked = false;
-    }
-    await service.save();
-  }
-
-  await booking.save();
-
-  return booking;
-};
+) => {};
 
 // TODO
 const cancelBookingFromDB = async (
   bookingId: string,
   userId: string // 🔐 Passed from auth middleware
-) => {
-  const booking = await Booking.findById(bookingId);
-  if (!booking) {
-    throw new ApiError(StatusCodes.NOT_FOUND, 'Booking not found!');
-  }
-
-  if (String(booking.user) !== String(userId)) {
-    throw new ApiError(
-      StatusCodes.FORBIDDEN,
-      'Only the user can cancel this booking!'
-    );
-  }
-
-  booking.status = 'cancelled';
-
-  const service = await Service.findById(booking.service);
-  if (!service) {
-    throw new ApiError(StatusCodes.NOT_FOUND, 'Associated service not found!');
-  }
-
-  const availability = service.availability?.find(
-    item => item.date === booking.date
-  );
-  const timeSlot = availability?.startTimes.find(
-    slot => slot.start === booking.startTime
-  );
-
-  if (timeSlot) {
-    timeSlot.isBooked = false;
-    timeSlot.status = 'pending';
-    await service.save();
-  }
-
-  await booking.save();
-
-  return booking;
-};
+) => {};
 
 // Get all bookings for a service
 const getBookingsByServiceFromDB = async (serviceId: string) => {
