@@ -8,9 +8,9 @@ import unlinkFile from '../../../shared/unlinkFile';
 import generateOTP from '../../../util/generateOTP';
 import { IUser } from './user.interface';
 import { User } from './user.model';
+import { Types } from 'mongoose';
 
 const createUserToDB = async (payload: Partial<IUser>): Promise<IUser> => {
-  
   payload.islocationGranted = false;
   const createUser = await User.create(payload);
   if (!createUser) {
@@ -74,7 +74,6 @@ const updateProfileToDB = async (
   return updateDoc;
 };
 
-
 const accessLocationToDB = async (
   user: JwtPayload,
   payload: Partial<IUser>
@@ -92,9 +91,75 @@ const accessLocationToDB = async (
   return updateDoc;
 };
 
+// for bookmark
+
+const getBookmarkToDB = async (userId: string): Promise<any> => {
+  const user = await User.findById(userId).populate('bookmarks');
+
+  if (!user) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, "User doesn't exist!");
+  }
+
+  return user.bookmarks;
+};
+
+const addBookmarkToDB = async (
+  userId: string,
+  serviceId: string
+): Promise<IUser> => {
+  const serviceObjectId = new Types.ObjectId(serviceId);
+
+  // Check if the user exists
+  const user = await User.findById(userId);
+  if (!user) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, "User doesn't exist!");
+  }
+
+  if (user.bookmarks?.includes(serviceObjectId)) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, 'Service already bookmarked');
+  }
+
+  const updatedUser = await User.findByIdAndUpdate(
+    userId,
+    { $push: { bookmarks: serviceObjectId } },
+    { new: true }
+  );
+
+  if (!updatedUser) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, 'Failed to add bookmark');
+  }
+
+  return updatedUser;
+};
+
+const removeBookmarkFromDB = async (
+  userId: string,
+  serviceId: string
+): Promise<IUser> => {
+  const serviceObjectId = new Types.ObjectId(serviceId);
+  const updatedUser = await User.findByIdAndUpdate(
+    userId,
+    { $pull: { bookmarks: serviceObjectId } },
+    { new: true }
+  );
+
+  if (!updatedUser) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, "User doesn't exist!");
+  }
+
+  if (!updatedUser.bookmarks || updatedUser.bookmarks.length === 0) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, 'No bookmarks left');
+  }
+
+  return updatedUser;
+};
+
 export const UserService = {
   createUserToDB,
   getUserProfileFromDB,
   updateProfileToDB,
-  accessLocationToDB
+  accessLocationToDB,
+  addBookmarkToDB,
+  removeBookmarkFromDB,
+  getBookmarkToDB
 };
