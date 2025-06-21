@@ -1,5 +1,16 @@
 import { Model, Types } from 'mongoose';
 
+export interface IStartTime {
+  start: string;
+  isBooked: boolean;
+  status: 'pending' | 'completed' | 'accepted';
+}
+
+export interface IAvailability {
+  date: string;
+  startTimes: IStartTime[];
+}
+
 export type IService = {
   name: string;
   description?: string;
@@ -12,6 +23,7 @@ export type IService = {
   rating?: number;
   isTrending?: boolean;
   isRecommended?: boolean;
+  availability?: IAvailability[];
 };
 
 export type IPortfolio = {
