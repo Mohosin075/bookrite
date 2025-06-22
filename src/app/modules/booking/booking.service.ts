@@ -93,8 +93,8 @@ const createBookingFromDB = async (
 };
 
 // Get all bookings for a user
-const getBookingsByUserFromDB = async (userId: string) => {
-  const bookings = await Booking.find({ user: userId })
+const getBookingsByUserFromDB = async (userId: string, status: string) => {
+  const bookings = await Booking.find({ user: userId, status })
     .populate({
       path: 'service',
       select: 'name description price category rating image',
@@ -146,8 +146,8 @@ const getBookingsByServiceFromDB = async (serviceId: string) => {
 
 const acceptBookingFromDB = async (bookingId: string, providerId: string) => {
   const booking = await Booking.findById(bookingId)
-    .populate('service')  // Populates the service field with the full Service document
-    .populate('service.provider')  // Optionally populate the provider (User) field inside service
+    .populate('service') // Populates the service field with the full Service document
+    .populate('service.provider') // Optionally populate the provider (User) field inside service
     .exec();
 
   if (!booking) {
@@ -209,7 +209,6 @@ const acceptBookingFromDB = async (bookingId: string, providerId: string) => {
   return updatedBooking;
 };
 
-
 const rejectBookingFromDB = async (bookingId: string, providerId: string) => {
   const booking = await Booking.findById(bookingId)
     .populate('service')
@@ -229,14 +228,6 @@ const rejectBookingFromDB = async (bookingId: string, providerId: string) => {
       'Booking is already rejected or canceled.'
     );
   }
-
-  // // Ensure the provider is the correct one
-  // if (booking.service.provider._id.toString() !== providerId) {
-  //   throw new ApiError(
-  //     StatusCodes.FORBIDDEN,
-  //     'You are not authorized to reject this booking.'
-  //   );
-  // }
 
   // Update booking status to 'rejected'
   const updatedBooking = await Booking.findByIdAndUpdate(
@@ -275,6 +266,68 @@ const rejectBookingFromDB = async (bookingId: string, providerId: string) => {
   return updatedBooking;
 };
 
+const completeOrCancelBookingFromDB = async (
+  bookingId: string,
+  providerId: string,
+  action: 'completed' | 'canceled'
+) => {
+  const booking = await Booking.findById(bookingId)
+    .populate('service')
+    .populate('service.provider')
+    .exec();
+
+  if (!booking) {
+    throw new ApiError(
+      StatusCodes.NOT_FOUND,
+      'Booking not found or unauthorized.'
+    );
+  }
+
+  if (booking.status === 'completed' || booking.status === 'canceled') {
+    throw new ApiError(
+      StatusCodes.BAD_REQUEST,
+      'Booking is already processed.'
+    );
+  }
+
+  const updatedBooking = await Booking.findByIdAndUpdate(
+    bookingId,
+    { status: action === 'completed' ? 'completed' : 'canceled' },
+    { new: true }
+  );
+
+  const serviceDoc = await Service.findById(booking.service._id);
+
+  if (!serviceDoc) {
+    throw new ApiError(StatusCodes.NOT_FOUND, 'Service not found.');
+  }
+
+  const availabilityForDate = serviceDoc.availability?.find(
+    a => a.date === booking.date
+  );
+
+  if (!availabilityForDate) {
+    throw new ApiError(
+      StatusCodes.NOT_FOUND,
+      'Availability not found for this date!'
+    );
+  }
+
+  const existingTime = availabilityForDate.startTimes.find(
+    t => t.start === booking.startTime
+  );
+
+  if (!existingTime) {
+    throw new ApiError(StatusCodes.NOT_FOUND, 'Time slot not found!');
+  }
+
+  existingTime.isBooked = false;
+  existingTime.status = 'pending';
+  await serviceDoc.save();
+
+  return updatedBooking;
+};
+
 export const BookingServices = {
   createBookingFromDB,
   getBookingsByUserFromDB,
@@ -282,4 +335,5 @@ export const BookingServices = {
   getBookingsByServiceFromDB,
   acceptBookingFromDB,
   rejectBookingFromDB,
+  completeOrCancelBookingFromDB
 };
