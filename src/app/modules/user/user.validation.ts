@@ -22,8 +22,22 @@ const accessLocationZodSchema = z.object({
   islocationGranted: z.boolean().optional(),
 });
 
+const addBookmarkZodSchema = z.object({
+  body: z.object({
+    serviceId: z.string({ required_error: 'Service ID is required' }),
+  }),
+});
+
+const removeBookmarkZodSchema = z.object({
+  body: z.object({
+    serviceId: z.string({ required_error: 'Service ID is required' }),
+  }),
+});
+
 export const UserValidation = {
   createUserZodSchema,
   updateUserZodSchema,
   accessLocationZodSchema,
+  addBookmarkZodSchema,
+  removeBookmarkZodSchema,
 };

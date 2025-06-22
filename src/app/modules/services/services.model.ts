@@ -9,17 +9,17 @@ import {
 } from './services.interface';
 
 const startTimeSchema = new Schema<IStartTime>({
-  start: { type: String},
+  start: { type: String },
   isBooked: { type: Boolean, default: false },
   status: {
     type: String,
-    enum: ['pending', 'completed', 'accepted'],
+    enum: ['pending', 'completed', 'accepted', 'rejected', 'cancaled'],
     default: 'pending',
   },
 });
 
 const availabilitySchema = new Schema<IAvailability>({
-  date: { type: String},
+  date: { type: String },
   startTimes: {
     type: [startTimeSchema],
     default: [],
@@ -33,7 +33,7 @@ const serviceSchema = new Schema<IService, ServiceModel>(
     price: { type: Number, required: true },
     category: { type: Schema.Types.ObjectId, ref: 'Category', required: true },
     provider: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-    image: { type: String, required: true },
+    image: { type: String, required: false },
     tags: { type: [String], default: [] },
     isActive: { type: Boolean, default: true },
     isTrending: { type: Boolean, default: false },

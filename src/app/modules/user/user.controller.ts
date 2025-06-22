@@ -20,6 +20,7 @@ const createUser = catchAsync(
 );
 
 const getUserProfile = catchAsync(async (req: Request, res: Response) => {
+  console.log('hit');
   const user = req.user;
   const result = await UserService.getUserProfileFromDB(user);
 
@@ -52,7 +53,6 @@ const updateProfile = catchAsync(
   }
 );
 
-
 //accessLocation
 const accessLocation = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -72,4 +72,59 @@ const accessLocation = catchAsync(
   }
 );
 
-export const UserController = { createUser, getUserProfile, updateProfile, accessLocation };
+const addBookmark = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { user } = req;
+    const { serviceId } = req.body;
+
+    const result = await UserService.addBookmarkToDB(user.id, serviceId);
+
+    sendResponse(res, {
+      success: true,
+      statusCode: StatusCodes.OK,
+      message: 'Bookmark added successfully',
+      data: result,
+    });
+  }
+);
+
+const removeBookmark = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { user } = req;
+    const { serviceId } = req.body;
+
+    const result = await UserService.removeBookmarkFromDB(user.id, serviceId);
+
+    sendResponse(res, {
+      success: true,
+      statusCode: StatusCodes.OK,
+      message: 'Bookmark removed successfully',
+      data: result,
+    });
+  }
+);
+
+const getBookmark = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { user } = req;
+
+    const result = await UserService.getBookmarkToDB(user.id);
+
+    sendResponse(res, {
+      success: true,
+      statusCode: StatusCodes.OK,
+      message: 'Bookmark data retrived successfully',
+      data: result,
+    });
+  }
+);
+
+export const UserController = {
+  createUser,
+  getUserProfile,
+  updateProfile,
+  accessLocation,
+  addBookmark,
+  removeBookmark,
+  getBookmark,
+};

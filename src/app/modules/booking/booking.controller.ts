@@ -8,6 +8,7 @@ import catchAsync from '../../../shared/catchAsync'; // Assuming catchAsync is a
 const createBooking = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const { service, user, date, startTime } = req.body;
+    console.log('sdfk')
     try {
       const booking = await BookingServices.createBookingFromDB(
         service,
@@ -15,6 +16,7 @@ const createBooking = catchAsync(
         date,
         startTime
       );
+      
       sendResponse(res, {
         success: true,
         statusCode: StatusCodes.CREATED,
@@ -65,48 +67,6 @@ const getSingleBooking = catchAsync(
   }
 );
 
-// Update booking status (e.g., from pending to accepted or completed)
-const updateBookingStatus = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const { id } = req.params;
-    const { status } = req.body; // e.g., 'pending', 'accepted', 'completed'
-
-    try {
-      const updatedBooking = await BookingServices.updateBookingStatusFromDB(
-        id,
-        status
-      );
-      sendResponse(res, {
-        success: true,
-        statusCode: StatusCodes.OK,
-        message: 'Booking status updated successfully.',
-        data: updatedBooking,
-      });
-    } catch (error) {
-      next(error);
-    }
-  }
-);
-
-// Cancel a booking and free up the time slot
-const cancelBooking = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const { id } = req.params;
-
-    try {
-      const cancelledBooking = await BookingServices.cancelBookingFromDB(id);
-      sendResponse(res, {
-        success: true,
-        statusCode: StatusCodes.OK,
-        message: 'Booking cancelled successfully.',
-        data: cancelledBooking,
-      });
-    } catch (error) {
-      next(error);
-    }
-  }
-);
-
 // Get all bookings for a specific service
 const getBookingsByService = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -128,11 +88,55 @@ const getBookingsByService = catchAsync(
   }
 );
 
+
+
+
+// Accept booking
+const acceptBooking = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { bookingId } = req.params;
+    const providerId = req.user.id; 
+
+    try {
+      const booking = await BookingServices.acceptBookingFromDB(bookingId, providerId);
+      sendResponse(res, {
+        success: true,
+        statusCode: StatusCodes.OK,
+        message: 'Booking accepted successfully.',
+        data: booking,
+      });
+    } catch (error) {
+      next(error);  // Pass error to the global error handler
+    }
+  }
+);
+
+// Reject booking
+const rejectBooking = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { bookingId } = req.params;
+    const providerId = req.user.id; 
+
+    try {
+      const booking = await BookingServices.rejectBookingFromDB(bookingId, providerId);
+      sendResponse(res, {
+        success: true,
+        statusCode: StatusCodes.OK,
+        message: 'Booking rejected successfully.',
+        data: booking,
+      });
+    } catch (error) {
+      next(error);  // Pass error to the global error handler
+    }
+  }
+);
+
+
 export const BookingController = {
   createBooking,
   getBookingsByUser,
   getSingleBooking,
-  updateBookingStatus,
-  cancelBooking,
   getBookingsByService,
+  acceptBooking,
+  rejectBooking
 };
