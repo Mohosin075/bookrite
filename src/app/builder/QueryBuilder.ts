@@ -28,14 +28,42 @@ class QueryBuilder<T> {
   }
 
   //filtering
-  filter() {
-    const queryObj = { ...this.query };
-    const excludeFields = ['searchTerm', 'sort', 'page', 'limit', 'fields'];
-    excludeFields.forEach(el => delete queryObj[el]);
+  // filter() {
+  //   const queryObj = { ...this.query };
+  //   const excludeFields = ['searchTerm', 'sort', 'page', 'limit', 'fields'];
+  //   excludeFields.forEach(el => delete queryObj[el]);
 
-    this.modelQuery = this.modelQuery.find(queryObj as FilterQuery<T>);
-    return this;
+  //   this.modelQuery = this.modelQuery.find(queryObj as FilterQuery<T>);
+  //   return this;
+  // }
+
+  filter() {
+  const queryObj = { ...this.query };
+  const excludeFields = ['searchTerm', 'sort', 'page', 'limit', 'fields'];
+  excludeFields.forEach(el => delete queryObj[el]);
+
+  // Extract minPrice and maxPrice if they exist
+  const minPrice = queryObj.minPrice;
+  const maxPrice = queryObj.maxPrice;
+
+  // Remove them from queryObj since you'll handle price separately
+  delete queryObj.minPrice;
+  delete queryObj.maxPrice;
+
+  // Start building the query filter object
+  const filterConditions: any = { ...queryObj };
+
+  // Add price filter if min or max is provided
+  if (minPrice || maxPrice) {
+    filterConditions.price = {};
+    if (minPrice) filterConditions.price.$gte = Number(minPrice);
+    if (maxPrice) filterConditions.price.$lte = Number(maxPrice);
   }
+
+  this.modelQuery = this.modelQuery.find(filterConditions as FilterQuery<T>);
+  return this;
+}
+
 
   //sorting
   sort() {

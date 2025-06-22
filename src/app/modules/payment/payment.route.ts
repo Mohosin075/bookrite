@@ -14,10 +14,5 @@ router.post(
   PaymentController.createStripePayment
 );
 
-router.get(
-  '/confirm-stripe-payment/:transactionId',
-  auth(USER_ROLES.USER),
-  PaymentController.confirmStripePayment
-);
 
 export const paymentRoutes = router;
