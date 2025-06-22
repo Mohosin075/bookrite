@@ -3,7 +3,7 @@ import { Model, Types } from 'mongoose';
 export interface IStartTime {
   start: string;
   isBooked: boolean;
-  status: 'pending' | 'accepted' | 'completed' | 'rejected'| 'cancaled'
+  status: 'pending' | 'accepted' | 'completed' | 'rejected' | 'cancaled';
 }
 
 export interface IAvailability {
@@ -21,6 +21,7 @@ export type IService = {
   tags?: string[];
   isActive?: boolean;
   rating?: number;
+  review?: Types.ObjectId;
   isTrending?: boolean;
   isRecommended?: boolean;
   availability?: IAvailability[];

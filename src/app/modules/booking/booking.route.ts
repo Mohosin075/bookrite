@@ -48,4 +48,16 @@ router.get(
   BookingController.getBookingsByService
 );
 
+router.patch(
+  '/complete/:bookingId',
+  auth(USER_ROLES.PROVIDER, USER_ROLES.USER),  
+  BookingController.completeBooking
+);
+
+router.patch(
+  '/cancel/:bookingId',
+  auth(USER_ROLES.PROVIDER, USER_ROLES.USER), 
+  BookingController.cancelBooking
+);
+
 export const bookingRoutes = router;

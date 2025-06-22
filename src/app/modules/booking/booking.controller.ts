@@ -32,17 +32,17 @@ const createBooking = catchAsync(
 // Get all bookings for a user
 const getBookingsByUser = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { user } = req.body;
+    const { user , status} = req.body;
 
     try {
-      const bookings = await BookingServices.getBookingsByUserFromDB(user);
+      const bookings = await BookingServices.getBookingsByUserFromDB(user, status);
       sendResponse(res, {
         success: true,
         statusCode: StatusCodes.OK,
         message: 'Booking data retrieved successfully.',
         data: bookings,
       });
-    } catch (error) {
+    } catch (error) { 
       next(error);
     }
   }
@@ -132,11 +132,62 @@ const rejectBooking = catchAsync(
 );
 
 
+const completeBooking = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { bookingId } = req.params;
+    const providerId = req.user.id; 
+
+    try {
+      const booking = await BookingServices.completeOrCancelBookingFromDB(
+        bookingId,
+        providerId,
+        'completed' 
+      );
+      sendResponse(res, {
+        success: true,
+        statusCode: StatusCodes.OK,
+        message: 'Booking completed successfully.',
+        data: booking,
+      });
+    } catch (error) {
+      next(error); 
+    }
+  }
+);
+
+// Cancel booking
+const cancelBooking = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { bookingId } = req.params;
+    const providerId = req.user.id; 
+
+    try {
+      const booking = await BookingServices.completeOrCancelBookingFromDB(
+        bookingId,
+        providerId,
+        'canceled' 
+      );
+      sendResponse(res, {
+        success: true,
+        statusCode: StatusCodes.OK,
+        message: 'Booking canceled successfully.',
+        data: booking,
+      });
+    } catch (error) {
+      next(error); // Pass error to the global error handler
+    }
+  }
+);
+
+
+
 export const BookingController = {
   createBooking,
   getBookingsByUser,
   getSingleBooking,
   getBookingsByService,
   acceptBooking,
-  rejectBooking
+  rejectBooking,
+  completeBooking,
+  cancelBooking,
 };
