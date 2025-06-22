@@ -5,6 +5,7 @@ import { Portfolio, Service } from './services.model';
 import QueryBuilder from '../../builder/QueryBuilder';
 import { JwtPayload } from 'jsonwebtoken';
 import { Types } from 'mongoose';
+import Stripe from 'stripe';
 
 const createServiceFromDB = async (data: IService) => {
   return await Service.create(data);
