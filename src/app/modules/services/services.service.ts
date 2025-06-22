@@ -7,18 +7,7 @@ import { JwtPayload } from 'jsonwebtoken';
 import { Types } from 'mongoose';
 
 const createServiceFromDB = async (data: IService) => {
-  const availability = [
-    {
-      date: '',
-      startTimes: [
-        { start: '', isBooked: false, status: 'pending' },
-        { start: '', isBooked: false, status: 'pending' },
-        { start: '', isBooked: false, status: 'pending' },
-      ],
-    },
-  ];
-
-  return await Service.create({ ...data, availability });
+  return await Service.create(data);
 };
 
 const getServicesFromDB = async (query: Record<string, any>) => {

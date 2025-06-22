@@ -5,6 +5,21 @@ import { USER_ROLES } from '../../../enums/user'; // Enum for user roles
 
 const router = express.Router();
 
+
+// Route to accept a booking
+router.patch(
+  '/accept/:bookingId',
+  auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.ADMIN, USER_ROLES.PROVIDER, USER_ROLES.USER),
+  BookingController.acceptBooking
+);
+
+// Route to reject a booking
+router.patch(
+  '/reject/:bookingId',
+  auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.ADMIN, USER_ROLES.PROVIDER, USER_ROLES.USER),
+  BookingController.rejectBooking
+);
+
 // Route to create a booking
 router.post(
   '/',
@@ -24,20 +39,6 @@ router.get(
   '/:id',
   auth(USER_ROLES.USER),
   BookingController.getSingleBooking
-);
-
-// Route to update booking status (e.g., from pending to accepted or completed)
-router.patch(
-  '/:id',
-  auth(USER_ROLES.USER, USER_ROLES.PROVIDER),
-  BookingController.updateBookingStatus
-);
-
-// Route to cancel a booking
-router.delete(
-  '/:id',
-  auth(USER_ROLES.USER),
-  BookingController.cancelBooking
 );
 
 // Route to get bookings by service

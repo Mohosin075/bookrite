@@ -2,7 +2,8 @@ import { StatusCodes } from 'http-status-codes';
 import ApiError from '../../../errors/ApiError';
 import { Service } from '../services/services.model';
 import Booking from './booking.model';
-import { IBooking } from './booking.interface';
+import { IService } from '../services/services.interface';
+import { Types } from 'mongoose';
 
 // Create a booking
 const createBookingFromDB = async (
@@ -34,8 +35,8 @@ const createBookingFromDB = async (
       startTimes: [
         {
           start: startTime,
-          isBooked: true,
-          status: 'accepted',
+          isBooked: false,
+          status: 'pending',
         },
       ],
     });
@@ -61,14 +62,14 @@ const createBookingFromDB = async (
         );
       }
 
-      existingTime.isBooked = true;
-      existingTime.status = 'accepted';
+      existingTime.isBooked = false;
+      existingTime.status = 'pending';
     } else {
       // Add the new startTime to that date
       availabilityForDate.startTimes.push({
         start: startTime,
-        isBooked: true,
-        status: 'accepted',
+        isBooked: false,
+        status: 'pending',
       });
     }
   }
@@ -130,21 +131,6 @@ const getSingleBookingFromDB = async (id: string) => {
   return booking;
 };
 
-type ProviderStatus = Extract<IBooking['status'], 'accepted' | 'rejected'>;
-
-// TODO
-const updateBookingStatusFromDB = async (
-  bookingId: string,
-  status: ProviderStatus,
-  providerId: string // 🔐 Passed from auth middleware
-) => {};
-
-// TODO
-const cancelBookingFromDB = async (
-  bookingId: string,
-  userId: string // 🔐 Passed from auth middleware
-) => {};
-
 // Get all bookings for a service
 const getBookingsByServiceFromDB = async (serviceId: string) => {
   const bookings = await Booking.find({ service: serviceId }).populate('user');
@@ -158,11 +144,142 @@ const getBookingsByServiceFromDB = async (serviceId: string) => {
   return bookings;
 };
 
+const acceptBookingFromDB = async (bookingId: string, providerId: string) => {
+  const booking = await Booking.findById(bookingId)
+    .populate('service')  // Populates the service field with the full Service document
+    .populate('service.provider')  // Optionally populate the provider (User) field inside service
+    .exec();
+
+  if (!booking) {
+    throw new ApiError(
+      StatusCodes.NOT_FOUND,
+      'Booking not found or unauthorized.'
+    );
+  }
+
+  if (booking.status === 'accepted' || booking.status === 'canceled') {
+    throw new ApiError(
+      StatusCodes.BAD_REQUEST,
+      'Booking is already processed.'
+    );
+  }
+
+  // // Ensure the provider is the correct one
+  // if (booking.service.provider._id.toString() !== providerId) {
+  //   throw new ApiError(
+  //     StatusCodes.FORBIDDEN,
+  //     'You are not authorized to accept this booking.'
+  //   );
+  // }
+
+  // Update booking status to 'accepted'
+  const updatedBooking = await Booking.findByIdAndUpdate(
+    bookingId,
+    { status: 'accepted' },
+    { new: true }
+  );
+
+  // Update the time slot in the service (mark as booked)
+  const serviceDoc = await Service.findById(booking.service._id);
+  const availabilityForDate = serviceDoc?.availability?.find(
+    a => a.date === booking.date
+  );
+
+  if (!availabilityForDate) {
+    throw new ApiError(
+      StatusCodes.NOT_FOUND,
+      'Availability not found for this date!'
+    );
+  }
+
+  const existingTime = availabilityForDate.startTimes.find(
+    t => t.start === booking.startTime
+  );
+  if (!existingTime) {
+    throw new ApiError(StatusCodes.NOT_FOUND, 'Time slot not found!');
+  }
+
+  // Mark the time slot as booked and set status to 'accepted'
+  existingTime.isBooked = true;
+  existingTime.status = 'accepted';
+
+  // Save the updated service availability (with the new availability slot marked as booked)
+  await serviceDoc?.save();
+
+  return updatedBooking;
+};
+
+
+const rejectBookingFromDB = async (bookingId: string, providerId: string) => {
+  const booking = await Booking.findById(bookingId)
+    .populate('service')
+    .populate('service.provider')
+    .exec();
+
+  if (!booking) {
+    throw new ApiError(
+      StatusCodes.NOT_FOUND,
+      'Booking not found or unauthorized.'
+    );
+  }
+
+  if (booking.status === 'rejected' || booking.status === 'canceled') {
+    throw new ApiError(
+      StatusCodes.BAD_REQUEST,
+      'Booking is already rejected or canceled.'
+    );
+  }
+
+  // // Ensure the provider is the correct one
+  // if (booking.service.provider._id.toString() !== providerId) {
+  //   throw new ApiError(
+  //     StatusCodes.FORBIDDEN,
+  //     'You are not authorized to reject this booking.'
+  //   );
+  // }
+
+  // Update booking status to 'rejected'
+  const updatedBooking = await Booking.findByIdAndUpdate(
+    bookingId,
+    { status: 'rejected' },
+    { new: true }
+  );
+
+  // Update the time slot in the service (mark as not booked)
+  const serviceDoc = await Service.findById(booking.service._id);
+  const availabilityForDate = serviceDoc?.availability?.find(
+    a => a.date === booking.date
+  );
+
+  if (!availabilityForDate) {
+    throw new ApiError(
+      StatusCodes.NOT_FOUND,
+      'Availability not found for this date!'
+    );
+  }
+
+  const existingTime = availabilityForDate.startTimes.find(
+    t => t.start === booking.startTime
+  );
+  if (!existingTime) {
+    throw new ApiError(StatusCodes.NOT_FOUND, 'Time slot not found!');
+  }
+
+  // Mark the time slot as not booked and set status to 'rejected'
+  existingTime.isBooked = false;
+  existingTime.status = 'rejected';
+
+  // Save the updated service availability (with the time slot marked as not booked)
+  await serviceDoc?.save();
+
+  return updatedBooking;
+};
+
 export const BookingServices = {
   createBookingFromDB,
   getBookingsByUserFromDB,
   getSingleBookingFromDB,
-  updateBookingStatusFromDB,
-  cancelBookingFromDB,
   getBookingsByServiceFromDB,
+  acceptBookingFromDB,
+  rejectBookingFromDB,
 };
