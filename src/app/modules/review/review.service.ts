@@ -93,7 +93,7 @@ const updateReviewText = async (reviewId: string, userId: string, newReviewText:
   await review.save();
 
   return review;
-};
+}; 
 
 export const ReviewServices = {
   addReviewToService,

@@ -6,8 +6,8 @@ import {
   createServiceZodSchema,
   updateServiceZodSchema,
 } from './services.validation';
-import fileUploadHandler from '../../middlewares/fileUploadHandler';
 import { serviceController } from './services.controller';
+import fileUploadHandler from '../../middlewares/fileUploadHandler';
 
 const router = express.Router();
 
@@ -52,26 +52,23 @@ router.route('/category/:id').get(serviceController.getServiceByCategory);
 
 // for portfolio
 
-  router
-  .route('/portfolio/provider')
-  .get(serviceController.getPortfoliosByProvider)
-
 router
-  .route('/portfolio')
-  .post(
-    auth(USER_ROLES.PROVIDER),
-    fileUploadHandler(),
+  .route('/portfolio/provider')
+  .get(serviceController.getPortfoliosByProvider);
 
-    (req: Request, res: Response, next: NextFunction) => {
-      if (req.body.data) {
-        req.body = createPortfolioZodSchema.parse(JSON.parse(req.body.data));
-      }
-      return serviceController.createPortfolio(req, res, next);
-    },
+router.route('/portfolio').post(
+  auth(USER_ROLES.PROVIDER),
+  fileUploadHandler(),
 
-    serviceController.createPortfolio
-  )
-  
+  (req: Request, res: Response, next: NextFunction) => {
+    if (req.body.data) {
+      req.body = createPortfolioZodSchema.parse(JSON.parse(req.body.data));
+    }
+    return serviceController.createPortfolio(req, res, next);
+  },
+
+  serviceController.createPortfolio
+);
 
 router
   .route('/portfolio/:id')
@@ -93,8 +90,5 @@ router
     auth(USER_ROLES.PROVIDER, USER_ROLES.ADMIN, USER_ROLES.SUPER_ADMIN),
     serviceController.deletePortfolio
   );
-
-
-
 
 export const productRoutes = router;
