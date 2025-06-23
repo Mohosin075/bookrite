@@ -127,6 +127,23 @@ const deletePortfolioFromDB = async (id: string) => {
   return await Portfolio.findByIdAndDelete(id);
 };
 
+const markRecommendedServices = async () => {
+  const ratingThreshold = 4.5;
+  const reviewCountThreshold = 10;
+
+  const recommendedServices = await Service.find({
+    rating: { $gte: ratingThreshold },
+    reviewsCount: { $gte: reviewCountThreshold },
+  });
+
+  const result = await Service.updateMany(
+    { _id: { $in: recommendedServices.map(service => service._id) } },
+    { $set: { isRecommended: true } }
+  );
+
+  return result;
+};
+
 export const ServiceServices = {
   createServiceFromDB,
   getServicesFromDB,
@@ -140,4 +157,6 @@ export const ServiceServices = {
   getSinglePortfolioFromDB,
   updatePortfolioFromDB,
   deletePortfolioFromDB,
+
+  markRecommendedServices,
 };

@@ -178,6 +178,18 @@ const deletePortfolio = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const markRecommendedServices = catchAsync(async (req: Request, res: Response) => {
+  const result = await ServiceServices.markRecommendedServices();
+
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.OK,
+    message: 'Services marked as recommended successfully.',
+    data: result,
+  });
+});
+
+
 export const serviceController = {
   createService,
   getServiceByCategory,
@@ -190,4 +202,5 @@ export const serviceController = {
   getSinglePortfolio,
   updatePortfolio,
   deletePortfolio,
+  markRecommendedServices
 };

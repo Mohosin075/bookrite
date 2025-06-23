@@ -161,5 +161,5 @@ export const UserService = {
   accessLocationToDB,
   addBookmarkToDB,
   removeBookmarkFromDB,
-  getBookmarkToDB
+  getBookmarkToDB,
 };

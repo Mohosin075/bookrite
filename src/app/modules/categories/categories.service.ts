@@ -25,7 +25,7 @@ const getSingleCategoryFromDB = async (id: string) => {
   const isExistCategory = await Category.findById(id);
   if (!isExistCategory) {
     throw new ApiError(StatusCodes.BAD_REQUEST, 'Category doesnt exist!');
-  }
+  } 
 
   return isExistCategory;
 };

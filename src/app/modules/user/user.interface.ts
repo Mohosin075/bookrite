@@ -9,6 +9,8 @@ export type IUser = {
   password: string;
   address: string;
   islocationGranted: boolean;
+  latitude?: number;  
+  longitude?: number;
   image?: string;
   status: 'active' | 'delete';
   verified: boolean;
