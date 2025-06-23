@@ -190,6 +190,30 @@ const markRecommendedServices = catchAsync(async (req: Request, res: Response) =
 });
 
 
+
+const getRecommendedServices = catchAsync(async (req: Request, res: Response) => {
+  const result = await ServiceServices.getRecommendedServicesFromDB();
+
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.OK,
+    message: 'Recommended services fetched successfully.',
+    data: result,
+  });
+});
+
+const getTrendingServices = catchAsync(async (req: Request, res: Response) => {
+  const result = await ServiceServices.getTrendingServicesFromDB();
+
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.OK,
+    message: 'Trending services fetched successfully.',
+    data: result,
+  });
+});
+
+
 export const serviceController = {
   createService,
   getServiceByCategory,
@@ -202,5 +226,8 @@ export const serviceController = {
   getSinglePortfolio,
   updatePortfolio,
   deletePortfolio,
-  markRecommendedServices
+  markRecommendedServices,
+
+  getRecommendedServices,
+  getTrendingServices,
 };

@@ -146,32 +146,77 @@ const markRecommendedServices = async () => {
 };
 
 const markTrendingServices = async () => {
-  const bookingThreshold = 50;
+  const bookingThreshold = 2;
   const daysThreshold = 30;
 
-  const allServices = await Service.find();
+  const dateThreshold = new Date(
+    Date.now() - daysThreshold * 24 * 60 * 60 * 1000
+  );
 
-  const servicesToUpdate = [];
+  // Step 1: Reset all services to not trending
+  await Service.updateMany({}, { $set: { isTrending: false } });
 
-  for (const service of allServices) {
-    const bookingCount = await Booking.countDocuments({
-      service: service._id,
-      date: {
-        $gte: new Date(Date.now() - daysThreshold * 24 * 60 * 60 * 1000),
+  const trendingServices = await Service.aggregate([
+    {
+      $lookup: {
+        from: 'bookings',
+        localField: '_id',
+        foreignField: 'service',
+        as: 'bookings',
       },
-    });
+    },
+    {
+      $unwind: {
+        path: '$bookings',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $match: {
+        'bookings.date': { $gte: dateThreshold },
+      },
+    },
+    {
+      $group: {
+        _id: '$_id',
+        bookingCount: { $sum: 1 },
+      },
+    },
+    {
+      $match: {
+        bookingCount: { $gte: bookingThreshold },
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+      },
+    },
+  ]);
 
-    if (bookingCount >= bookingThreshold) {
-      servicesToUpdate.push(service._id);
-    }
-  }
+  const servicesToUpdate = trendingServices.map(service => service._id);
 
   const result = await Service.updateMany(
     { _id: { $in: servicesToUpdate } },
     { $set: { isTrending: true } }
   );
 
-  return result;
+  return result
+
+};
+
+export default markTrendingServices;
+
+const getRecommendedServicesFromDB = async (limit: number = 10) => {
+  return await Service.find({ isRecommended: true })
+    .sort({ createdAt: -1 })
+    .limit(limit);
+};
+
+const getTrendingServicesFromDB = async (limit: number = 10) => {
+  return await Service.find({ isTrending: true })
+    .sort({ createdAt: -1 })
+    .limit(limit);
 };
 
 export const ServiceServices = {
@@ -189,5 +234,8 @@ export const ServiceServices = {
   deletePortfolioFromDB,
 
   markRecommendedServices,
-  markTrendingServices
+  markTrendingServices,
+
+  getRecommendedServicesFromDB,
+  getTrendingServicesFromDB,
 };
