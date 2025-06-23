@@ -16,7 +16,7 @@ cron.schedule('* * * * *', async () => {
 
     // Then, mark the services as trending
     const trendingResult = await ServiceServices.markTrendingServices();
-    console.log(`${trendingResult.modifiedCount} services marked as trending.`);
+    console.log(`${trendingResult?.modifiedCount} services marked as trending.`);
   } catch (error) {
     console.error(
       'Error while marking recommended or trending services:',

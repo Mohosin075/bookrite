@@ -28,6 +28,8 @@ router
   )
   .get(serviceController.getServices);
 
+router.route('/recommended').get(serviceController.getRecommendedServices);
+router.route('/trending').get(serviceController.getTrendingServices);
 
 router
   .route('/:id')
