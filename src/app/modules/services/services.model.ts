@@ -39,7 +39,8 @@ const serviceSchema = new Schema<IService, ServiceModel>(
     isTrending: { type: Boolean, default: false },
     isRecommended: { type: Boolean, default: false },
     rating: { type: Number, default: 0 },
-    review : { type: Schema.Types.ObjectId, ref: 'Review', required: true },
+    review : { type: Schema.Types.ObjectId, ref: 'Review' },
+    reviewsCount: { type: Number, default: 0 },
     availability: {
       type: [availabilitySchema],
       default: [],

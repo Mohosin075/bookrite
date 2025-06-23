@@ -7,18 +7,27 @@ import { UserController } from './user.controller';
 import { UserValidation } from './user.validation';
 const router = express.Router();
 
-
 router
   .route('/bookmark')
   .get(
-    auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.ADMIN, USER_ROLES.USER, USER_ROLES.PROVIDER),
+    auth(
+      USER_ROLES.SUPER_ADMIN,
+      USER_ROLES.ADMIN,
+      USER_ROLES.USER,
+      USER_ROLES.PROVIDER
+    ),
     UserController.getBookmark
   );
 
 router
   .route('/bookmark/add')
   .patch(
-    auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.ADMIN, USER_ROLES.USER, USER_ROLES.PROVIDER),
+    auth(
+      USER_ROLES.SUPER_ADMIN,
+      USER_ROLES.ADMIN,
+      USER_ROLES.USER,
+      USER_ROLES.PROVIDER
+    ),
     validateRequest(UserValidation.addBookmarkZodSchema),
     UserController.addBookmark
   );
@@ -31,10 +40,17 @@ router
     UserController.removeBookmark
   );
 
-
 router
   .route('/profile')
-  .get(auth(USER_ROLES.ADMIN, USER_ROLES.USER, USER_ROLES.SUPER_ADMIN, USER_ROLES.PROVIDER), UserController.getUserProfile)
+  .get(
+    auth(
+      USER_ROLES.ADMIN,
+      USER_ROLES.USER,
+      USER_ROLES.SUPER_ADMIN,
+      USER_ROLES.PROVIDER
+    ),
+    UserController.getUserProfile
+  )
   .patch(
     auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.ADMIN, USER_ROLES.USER),
     fileUploadHandler(),
@@ -67,7 +83,5 @@ router
     validateRequest(UserValidation.accessLocationZodSchema),
     UserController.accessLocation
   );
-
-
 
 export const UserRoutes = router;

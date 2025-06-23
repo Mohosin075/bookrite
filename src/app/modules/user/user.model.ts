@@ -36,6 +36,8 @@ const userSchema = new Schema<IUser, UserModal>(
       type: Boolean,
       required: true,
     },
+    latitude: { type: Number },
+    longitude: { type: Number },
     image: {
       type: String,
       default: 'https://i.ibb.co/z5YHLV9/profile.png',
@@ -79,6 +81,9 @@ const userSchema = new Schema<IUser, UserModal>(
   },
   { timestamps: true }
 );
+
+// Create geospatial index for location field
+userSchema.index({ location: '2dsphere' });
 
 //exist user check
 userSchema.statics.isExistUserById = async (id: string) => {

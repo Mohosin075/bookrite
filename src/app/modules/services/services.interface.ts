@@ -22,6 +22,7 @@ export type IService = {
   isActive?: boolean;
   rating?: number;
   review?: Types.ObjectId;
+  reviewsCount: number;
   isTrending?: boolean;
   isRecommended?: boolean;
   availability?: IAvailability[];
