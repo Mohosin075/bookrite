@@ -6,6 +6,7 @@ import QueryBuilder from '../../builder/QueryBuilder';
 import { JwtPayload } from 'jsonwebtoken';
 import { Types } from 'mongoose';
 import Stripe from 'stripe';
+import Booking from '../booking/booking.model';
 
 const createServiceFromDB = async (data: IService) => {
   return await Service.create(data);
@@ -144,6 +145,35 @@ const markRecommendedServices = async () => {
   return result;
 };
 
+const markTrendingServices = async () => {
+  const bookingThreshold = 50;
+  const daysThreshold = 30;
+
+  const allServices = await Service.find();
+
+  const servicesToUpdate = [];
+
+  for (const service of allServices) {
+    const bookingCount = await Booking.countDocuments({
+      service: service._id,
+      date: {
+        $gte: new Date(Date.now() - daysThreshold * 24 * 60 * 60 * 1000),
+      },
+    });
+
+    if (bookingCount >= bookingThreshold) {
+      servicesToUpdate.push(service._id);
+    }
+  }
+
+  const result = await Service.updateMany(
+    { _id: { $in: servicesToUpdate } },
+    { $set: { isTrending: true } }
+  );
+
+  return result;
+};
+
 export const ServiceServices = {
   createServiceFromDB,
   getServicesFromDB,
@@ -159,4 +189,5 @@ export const ServiceServices = {
   deletePortfolioFromDB,
 
   markRecommendedServices,
+  markTrendingServices
 };
