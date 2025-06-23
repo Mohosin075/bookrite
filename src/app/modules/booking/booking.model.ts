@@ -5,7 +5,7 @@ const bookingSchema = new Schema(
   {
     service: { type: Schema.Types.ObjectId, ref: 'Service', required: true },
     user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-    date: { type: String, required: true },
+    date: { type: Date, required: true },
     startTime: { type: String, required: true },
     status: {
       type: String,
