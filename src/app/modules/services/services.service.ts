@@ -201,8 +201,7 @@ const markTrendingServices = async () => {
     { $set: { isTrending: true } }
   );
 
-  return result
-
+  return result;
 };
 
 export default markTrendingServices;
