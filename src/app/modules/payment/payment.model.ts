@@ -31,4 +31,6 @@ const paymentSchema = new Schema<IPayment>(
   { timestamps: true }
 );
 
+paymentSchema.index({ user: 1 });
+
 export const Payment = model<IPayment>('Payment', paymentSchema);
