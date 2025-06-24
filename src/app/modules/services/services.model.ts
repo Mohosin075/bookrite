@@ -39,7 +39,7 @@ const serviceSchema = new Schema<IService, ServiceModel>(
     isTrending: { type: Boolean, default: false },
     isRecommended: { type: Boolean, default: false },
     rating: { type: Number, default: 0 },
-    review : { type: Schema.Types.ObjectId, ref: 'Review' },
+    review: { type: Schema.Types.ObjectId, ref: 'Review' },
     reviewsCount: { type: Number, default: 0 },
     availability: {
       type: [availabilitySchema],
@@ -59,9 +59,18 @@ const portfolioSchema = new Schema<IPortfolio, Portfoli0Model>(
   { timestamps: true }
 );
 
+portfolioSchema.index({ provider: 1 });
+
 export const Portfolio = model<IPortfolio, Portfoli0Model>(
   'Portfolio',
   portfolioSchema
 );
+
+serviceSchema.index({ category: 1 });
+serviceSchema.index({ provider: 1 });
+serviceSchema.index({ isActive: 1 });
+serviceSchema.index({ isTrending: 1 });
+serviceSchema.index({ isRecommended: 1 });
+
 
 export const Service = model<IService, ServiceModel>('Service', serviceSchema);

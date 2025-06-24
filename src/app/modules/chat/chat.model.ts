@@ -10,4 +10,6 @@ const chatSchema = new Schema<IChat>(
   { timestamps: true }
 );
 
+chatSchema.index({ roomId: 1 });
+
 export const Chat = model<IChat>('Chat', chatSchema);
