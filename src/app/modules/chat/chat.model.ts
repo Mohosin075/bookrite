@@ -3,13 +3,14 @@ import { IChat } from "./chat.interface";
 
 const chatSchema = new Schema<IChat>(
   {
-    roomId: { type: String, required: true },
-    sender: { type: String, required: true },
-    message: { type: String, required: true },
+    participants: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
   },
   { timestamps: true }
 );
 
-chatSchema.index({ roomId: 1 });
-
-export const Chat = model<IChat>('Chat', chatSchema);
+export const Chat = model<IChat>("Chat", chatSchema);

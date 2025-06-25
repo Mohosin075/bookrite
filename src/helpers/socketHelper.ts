@@ -1,63 +1,32 @@
-// import colors from 'colors';
-// import { Server } from 'socket.io';
-// import { logger } from '../shared/logger';
-
-// const socket = (io: Server) => {
-//   io.on('connection', socket => {
-//     logger.info(colors.blue('A user connected'));
-
-//     //disconnect
-//     socket.on('disconnect', () => {
-//       logger.info(colors.red('A user disconnect'));
-//     });
-//   });
-// };
-
-// export const socketHelper = { socket };
-
-import colors from 'colors';
 import { Server } from 'socket.io';
-import { Chat } from '../app/modules/chat/chat.model';
+import { Message } from '../app/modules/message/message.model';
 
 const socket = (io: Server) => {
   io.on('connection', socket => {
-    console.log(colors.blue(`User connected: ${socket.id}`));
-
-    socket.on('join_room', (roomId: string) => {
-      socket.join(roomId);
-      console.log(colors.yellow(`User ${socket.id} joined room: ${roomId}`));
+    console.log('A user connected');
+    // Handle joining a chat room
+    socket.on('joinChat', chatId => {
+      console.log('chatId', chatId);
+      socket.join(chatId);
     });
 
-    socket.on('send_message', async data => {
-      try {
-        const { roomId, sender, message } = data;
-        if (!roomId || !sender || !message) {
-          console.log({data})
-          return;
-        }
+    // Handle sending a message
+    socket.on('sendMessage', messageData => {
+      const { chatId, senderId, text } = messageData;
 
-        const savedMessage = await Chat.create({ roomId, sender, message });
+      //Create a new message in the database
+      const newMessage = new Message({ chatId, senderId, text });
+      newMessage.save();
 
-        io.to(roomId).emit('receive_message', savedMessage);
-      } catch (error) {
-        console.error(colors.red('Error in send_message handler:'), error);
-        // Optionally, send error message back to sender
-        socket.emit('error_message', { message: 'Failed to send message' });
-      }
+      // Broadcast the message to the chat room
+      io.to(chatId).emit('receiveMessage', newMessage);
     });
 
-    // Handle disconnect event
-    socket.on('disconnect', reason => {
-      console.log(
-        colors.red(`User disconnected: ${socket.id}, reason: ${reason}`)
-      );
-    });
-
-    // Optional: catch socket errors
-    socket.on('error', error => {
-      console.error(colors.red(`Socket error from user ${socket.id}:`), error);
+    //disconnect socket
+    socket.on('disconnect', () => {
+      console.log('A user disconnected');
     });
   });
 };
 
-export const socketHelper = { socket };
+export const SocketHelper = { socket };

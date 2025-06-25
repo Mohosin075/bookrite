@@ -8,6 +8,7 @@ import { bookingRoutes } from '../app/modules/booking/booking.route';
 import { serviceReviewRoutes } from '../app/modules/review/review.route';
 import { paymentRoutes } from '../app/modules/payment/payment.route';
 import { ChatRoutes } from '../app/modules/chat/chat.route';
+import { MessageRoutes } from '../app/modules/message/message.route';
 const router = express.Router();
 
 const apiRoutes = [
@@ -46,6 +47,10 @@ const apiRoutes = [
   {
     path: '/chat',
     route: ChatRoutes,
+  },
+  {
+    path: '/message',
+    route: MessageRoutes,
   },
 ];
 

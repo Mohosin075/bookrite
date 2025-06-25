@@ -20,7 +20,6 @@ const createUser = catchAsync(
 );
 
 const getUserProfile = catchAsync(async (req: Request, res: Response) => {
-  console.log('hit');
   const user = req.user;
   const result = await UserService.getUserProfileFromDB(user);
 
