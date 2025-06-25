@@ -4,12 +4,12 @@ import { Service } from '../services/services.model';
 import Booking from './booking.model';
 import { IService } from '../services/services.interface';
 import { Types } from 'mongoose';
+import { Notification } from '../notification/notification.model';
 
-// Create a booking
 const createBookingFromDB = async (
   serviceId: string,
   userId: string,
-  date: string,
+  date: Date,
   startTime: string
 ) => {
   const service = await Service.findById(serviceId);
@@ -23,19 +23,23 @@ const createBookingFromDB = async (
     service.availability = [];
   }
 
-  // Check if the date exists in availability
-  const availabilityIndex = service.availability.findIndex(
-    avail => avail.date === date
-  );
+  // Convert input date to date-only string for comparison
+  const inputDateStr = new Date(date).toISOString().slice(0, 10);
+
+  // Find availability index by date (compare by date string)
+  const availabilityIndex = service.availability.findIndex(avail => {
+    const availDateStr = new Date(avail.date).toISOString().slice(0, 10);
+    return availDateStr === inputDateStr;
+  });
 
   if (availabilityIndex === -1) {
-    // If date not found, push a new date with this time slot
+    // If date not found, add a new availability entry
     service.availability.push({
       date,
       startTimes: [
         {
           start: startTime,
-          isBooked: false,
+          isBooked: true,
           status: 'pending',
         },
       ],
@@ -62,13 +66,12 @@ const createBookingFromDB = async (
         );
       }
 
-      existingTime.isBooked = false;
+      existingTime.isBooked = true;
       existingTime.status = 'pending';
     } else {
-      // Add the new startTime to that date
       availabilityForDate.startTimes.push({
         start: startTime,
-        isBooked: false,
+        isBooked: true,
         status: 'pending',
       });
     }
@@ -78,7 +81,7 @@ const createBookingFromDB = async (
   await service.save();
 
   // Create the booking
-  const booking = new Booking({
+  const booking = await Booking.create({
     service: serviceId,
     user: userId,
     date,
@@ -87,7 +90,21 @@ const createBookingFromDB = async (
     paymentStatus: 'unpaid',
   });
 
-  await booking.save();
+  // Create Notification for provider
+  const message = `New booking request for "${service.name}" on ${inputDateStr} at ${startTime}`;
+
+  await Notification.create({
+    to: userId,
+    from: service.provider,
+    type: 'booking_request',
+    message,
+    metadata: {
+      bookingId: booking._id,
+      serviceId,
+      date,
+      time: startTime,
+    },
+  });
 
   return booking;
 };
@@ -335,5 +352,5 @@ export const BookingServices = {
   getBookingsByServiceFromDB,
   acceptBookingFromDB,
   rejectBookingFromDB,
-  completeOrCancelBookingFromDB
+  completeOrCancelBookingFromDB,
 };

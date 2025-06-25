@@ -7,11 +7,12 @@ import catchAsync from '../../../shared/catchAsync'; // Assuming catchAsync is a
 // Create a booking
 const createBooking = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { service, user, date, startTime } = req.body;
+    const { service, date, startTime } = req.body;
+    const {id} = req.user
     try {
       const booking = await BookingServices.createBookingFromDB(
         service,
-        user,
+        id,
         date,
         startTime
       );

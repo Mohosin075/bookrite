@@ -7,7 +7,7 @@ export interface IStartTime {
 }
 
 export interface IAvailability {
-  date: string;
+  date: Date;
   startTimes: IStartTime[];
 }
 

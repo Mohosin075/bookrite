@@ -19,7 +19,7 @@ const startTimeSchema = new Schema<IStartTime>({
 });
 
 const availabilitySchema = new Schema<IAvailability>({
-  date: { type: String },
+  date: { type: Date },
   startTimes: {
     type: [startTimeSchema],
     default: [],
