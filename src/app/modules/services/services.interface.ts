@@ -1,12 +1,12 @@
 import { Model, Types } from 'mongoose';
 
-export interface IStartTime {
+export type IStartTime = {
   start: string;
   isBooked: boolean;
   status: 'pending' | 'accepted' | 'completed' | 'rejected' | 'cancaled';
 }
 
-export interface IAvailability {
+export type IAvailability = {
   date: Date;
   startTimes: IStartTime[];
 }

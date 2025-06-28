@@ -8,28 +8,28 @@ export type NotificationType =
   | 'service_deactivated'
   | 'admin_announcement';
 
-interface BookingMetadata {
+type BookingMetadata = {
   bookingId: string;
   serviceId: string;
   date: string;
   time: string;
 }
 
-interface MessageMetadata {
+type MessageMetadata = {
   chatId: string;
   messageId: string;
 }
 
-interface ReviewMetadata {
+type ReviewMetadata = {
   serviceId: string;
   reviewId: string;
 }
 
-interface AdminMetadata {
+type AdminMetadata = {
   reason?: string;
 }
 
-export interface INotificationBase {
+export type INotificationBase = {
   to: string;
   from?: string;
   message: string;

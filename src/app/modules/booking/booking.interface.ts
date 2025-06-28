@@ -1,6 +1,6 @@
 import { Model, Types } from 'mongoose';
 
-export interface IBooking {
+export type IBooking = {
   service: Types.ObjectId;
   user?: Types.ObjectId;
   date: Date;
