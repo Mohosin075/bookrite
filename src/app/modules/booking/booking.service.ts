@@ -2,6 +2,7 @@ import { StatusCodes } from 'http-status-codes';
 import ApiError from '../../../errors/ApiError';
 import { Service } from '../services/services.model';
 import Booking from './booking.model';
+import { Notification } from '../notification/notification.model';
 
 
 const createBookingFromDB = async (
@@ -75,6 +76,7 @@ const createBookingFromDB = async (
     }
   }
 
+
   // Save updated service availability
   await service.save();
 
@@ -88,6 +90,24 @@ const createBookingFromDB = async (
     paymentStatus: 'unpaid',
   });
 
+  const NotificationData ={
+  text: "You have a new chat message.",
+  referenceId: booking._id,
+  screen: "RESERVATION"
+}
+
+
+
+    // sent notification
+  const result = await Notification.create(NotificationData);
+
+  //@ts-ignore
+  const socketIo = global.io;
+
+  // Fix: payload is not defined, use booking.user or booking.receiver if available
+  if (socketIo && booking.user) {
+    socketIo.emit(`notification::${booking.user}`, result);
+  }
 
   return booking;
 };
