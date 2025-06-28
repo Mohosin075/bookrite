@@ -18,7 +18,7 @@ const createCategory = catchAsync(
       message: 'Category created successfully.',
       data: result,
     });
-  }
+  },
 );
 
 const getCategory = catchAsync(
@@ -31,7 +31,7 @@ const getCategory = catchAsync(
       message: 'Category data retrieved successfully',
       data: result,
     });
-  }
+  },
 );
 
 const getSingleCategory = catchAsync(
@@ -46,7 +46,7 @@ const getSingleCategory = catchAsync(
       message: 'Category data retrieved successfully',
       data: result,
     });
-  }
+  },
 );
 
 const updateCategory = catchAsync(
@@ -62,7 +62,7 @@ const updateCategory = catchAsync(
       message: 'Category data updated successfully',
       data: result,
     });
-  }
+  },
 );
 
 const deleeteCategory = catchAsync(
@@ -76,7 +76,7 @@ const deleeteCategory = catchAsync(
       message: 'Category data deleted successfully',
       data: result,
     });
-  }
+  },
 );
 
 export const CategoryController = {

@@ -11,8 +11,7 @@ router.post(
   '/create-stripe-payment',
   auth(USER_ROLES.USER),
   validateRequest(createPaymentZodSchema),
-  PaymentController.createStripePayment
+  PaymentController.createStripePayment,
 );
-
 
 export const paymentRoutes = router;

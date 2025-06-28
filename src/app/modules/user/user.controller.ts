@@ -16,7 +16,7 @@ const createUser = catchAsync(
       message: 'User created successfully',
       data: result,
     });
-  }
+  },
 );
 
 const getUserProfile = catchAsync(async (req: Request, res: Response) => {
@@ -49,7 +49,7 @@ const updateProfile = catchAsync(
       message: 'Profile updated successfully',
       data: result,
     });
-  }
+  },
 );
 
 //accessLocation
@@ -68,7 +68,7 @@ const accessLocation = catchAsync(
       message: 'access location data updated successfully',
       data: result,
     });
-  }
+  },
 );
 
 const addBookmark = catchAsync(
@@ -84,7 +84,7 @@ const addBookmark = catchAsync(
       message: 'Bookmark added successfully',
       data: result,
     });
-  }
+  },
 );
 
 const removeBookmark = catchAsync(
@@ -100,7 +100,7 @@ const removeBookmark = catchAsync(
       message: 'Bookmark removed successfully',
       data: result,
     });
-  }
+  },
 );
 
 const getBookmark = catchAsync(
@@ -115,7 +115,7 @@ const getBookmark = catchAsync(
       message: 'Bookmark data retrived successfully',
       data: result,
     });
-  }
+  },
 );
 
 export const UserController = {

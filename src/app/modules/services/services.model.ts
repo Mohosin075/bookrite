@@ -19,7 +19,7 @@ const startTimeSchema = new Schema<IStartTime>({
 });
 
 const availabilitySchema = new Schema<IAvailability>({
-  date: { type: String },
+  date: { type: Date },
   startTimes: {
     type: [startTimeSchema],
     default: [],
@@ -46,7 +46,7 @@ const serviceSchema = new Schema<IService, ServiceModel>(
       default: [],
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 const portfolioSchema = new Schema<IPortfolio, Portfoli0Model>(
@@ -56,14 +56,14 @@ const portfolioSchema = new Schema<IPortfolio, Portfoli0Model>(
     image: { type: String },
     description: { type: String, required: true },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 portfolioSchema.index({ provider: 1 });
 
 export const Portfolio = model<IPortfolio, Portfoli0Model>(
   'Portfolio',
-  portfolioSchema
+  portfolioSchema,
 );
 
 serviceSchema.index({ category: 1 });
@@ -71,6 +71,5 @@ serviceSchema.index({ provider: 1 });
 serviceSchema.index({ isActive: 1 });
 serviceSchema.index({ isTrending: 1 });
 serviceSchema.index({ isRecommended: 1 });
-
 
 export const Service = model<IService, ServiceModel>('Service', serviceSchema);

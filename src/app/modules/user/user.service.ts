@@ -34,14 +34,14 @@ const createUserToDB = async (payload: Partial<IUser>): Promise<IUser> => {
   };
   await User.findOneAndUpdate(
     { _id: createUser._id },
-    { $set: { authentication } }
+    { $set: { authentication } },
   );
 
   return createUser;
 };
 
 const getUserProfileFromDB = async (
-  user: JwtPayload
+  user: JwtPayload,
 ): Promise<Partial<IUser>> => {
   const { id } = user;
   const isExistUser = await User.isExistUserById(id);
@@ -54,7 +54,7 @@ const getUserProfileFromDB = async (
 
 const updateProfileToDB = async (
   user: JwtPayload,
-  payload: Partial<IUser>
+  payload: Partial<IUser>,
 ): Promise<Partial<IUser | null>> => {
   const { id } = user;
   const isExistUser = await User.isExistUserById(id);
@@ -76,7 +76,7 @@ const updateProfileToDB = async (
 
 const accessLocationToDB = async (
   user: JwtPayload,
-  payload: Partial<IUser>
+  payload: Partial<IUser>,
 ): Promise<Partial<IUser | null>> => {
   const { id } = user;
   const isExistUser = await User.isExistUserById(id);
@@ -105,7 +105,7 @@ const getBookmarkToDB = async (userId: string): Promise<any> => {
 
 const addBookmarkToDB = async (
   userId: string,
-  serviceId: string
+  serviceId: string,
 ): Promise<IUser> => {
   const serviceObjectId = new Types.ObjectId(serviceId);
 
@@ -122,7 +122,7 @@ const addBookmarkToDB = async (
   const updatedUser = await User.findByIdAndUpdate(
     userId,
     { $push: { bookmarks: serviceObjectId } },
-    { new: true }
+    { new: true },
   );
 
   if (!updatedUser) {
@@ -134,13 +134,13 @@ const addBookmarkToDB = async (
 
 const removeBookmarkFromDB = async (
   userId: string,
-  serviceId: string
+  serviceId: string,
 ): Promise<IUser> => {
   const serviceObjectId = new Types.ObjectId(serviceId);
   const updatedUser = await User.findByIdAndUpdate(
     userId,
     { $pull: { bookmarks: serviceObjectId } },
-    { new: true }
+    { new: true },
   );
 
   if (!updatedUser) {

@@ -19,6 +19,3 @@ export interface IPayment {
 }
 
 export type PaymentModel = Model<IPayment>;
-
-
-

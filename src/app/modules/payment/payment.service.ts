@@ -31,7 +31,7 @@ const payWithStripeInOneGo = async (data: IPayment) => {
     paymentIntent.id,
     {
       payment_method: paymentMethod,
-    }
+    },
   );
 
   if (confirmedPaymentIntent.status !== 'succeeded') {

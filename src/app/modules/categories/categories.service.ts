@@ -25,7 +25,7 @@ const getSingleCategoryFromDB = async (id: string) => {
   const isExistCategory = await Category.findById(id);
   if (!isExistCategory) {
     throw new ApiError(StatusCodes.BAD_REQUEST, 'Category doesnt exist!');
-  } 
+  }
 
   return isExistCategory;
 };
@@ -33,7 +33,7 @@ const getSingleCategoryFromDB = async (id: string) => {
 // update category
 const updateCategoryFromDB = async (
   id: string,
-  payload: Partial<ICategory>
+  payload: Partial<ICategory>,
 ) => {
   const isExistCategory = await Category.findById(id);
   if (!isExistCategory) {

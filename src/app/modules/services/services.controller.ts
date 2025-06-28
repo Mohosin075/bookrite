@@ -134,9 +134,8 @@ const getPortfoliosByProvider = catchAsync(
   async (req: Request, res: Response) => {
     const { provider } = req.body;
 
-    const result = await ServiceServices.getPortfoliosByProviderFromDB(
-      provider
-    );
+    const result =
+      await ServiceServices.getPortfoliosByProviderFromDB(provider);
 
     sendResponse(res, {
       success: true,
@@ -144,7 +143,7 @@ const getPortfoliosByProvider = catchAsync(
       message: 'Portfolio data retrieved successfully.',
       data: result,
     });
-  }
+  },
 );
 
 // Update a portfolio by ID
@@ -178,29 +177,31 @@ const deletePortfolio = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-const markRecommendedServices = catchAsync(async (req: Request, res: Response) => {
-  const result = await ServiceServices.markRecommendedServices();
+const markRecommendedServices = catchAsync(
+  async (req: Request, res: Response) => {
+    const result = await ServiceServices.markRecommendedServices();
 
-  sendResponse(res, {
-    success: true,
-    statusCode: StatusCodes.OK,
-    message: 'Services marked as recommended successfully.',
-    data: result,
-  });
-});
+    sendResponse(res, {
+      success: true,
+      statusCode: StatusCodes.OK,
+      message: 'Services marked as recommended successfully.',
+      data: result,
+    });
+  },
+);
 
+const getRecommendedServices = catchAsync(
+  async (req: Request, res: Response) => {
+    const result = await ServiceServices.getRecommendedServicesFromDB();
 
-
-const getRecommendedServices = catchAsync(async (req: Request, res: Response) => {
-  const result = await ServiceServices.getRecommendedServicesFromDB();
-
-  sendResponse(res, {
-    success: true,
-    statusCode: StatusCodes.OK,
-    message: 'Recommended services fetched successfully.',
-    data: result,
-  });
-});
+    sendResponse(res, {
+      success: true,
+      statusCode: StatusCodes.OK,
+      message: 'Recommended services fetched successfully.',
+      data: result,
+    });
+  },
+);
 
 const getTrendingServices = catchAsync(async (req: Request, res: Response) => {
   const result = await ServiceServices.getTrendingServicesFromDB();
@@ -212,7 +213,6 @@ const getTrendingServices = catchAsync(async (req: Request, res: Response) => {
     data: result,
   });
 });
-
 
 export const serviceController = {
   createService,

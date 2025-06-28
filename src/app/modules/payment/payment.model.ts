@@ -28,7 +28,7 @@ const paymentSchema = new Schema<IPayment>(
 
     saveCard: { type: Boolean, default: false },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 paymentSchema.index({ user: 1 });

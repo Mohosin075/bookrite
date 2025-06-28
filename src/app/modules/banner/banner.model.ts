@@ -20,7 +20,7 @@ const bannerSchema = new Schema<IBanner, bannerModel>(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 export const Banner = model<IBanner, bannerModel>('Banner', bannerSchema);

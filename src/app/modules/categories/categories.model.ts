@@ -1,7 +1,6 @@
 import { model, Schema } from 'mongoose';
 import { CategoryModel, ICategory } from './categories.interface';
 
-
 const categorySchema = new Schema<ICategory, CategoryModel>(
   {
     name: {
@@ -16,10 +15,10 @@ const categorySchema = new Schema<ICategory, CategoryModel>(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 export const Category = model<ICategory, CategoryModel>(
   'Category',
-  categorySchema
+  categorySchema,
 );

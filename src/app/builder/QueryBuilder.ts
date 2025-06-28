@@ -20,7 +20,7 @@ class QueryBuilder<T> {
                 $regex: this.query.searchTerm,
                 $options: 'i',
               },
-            } as FilterQuery<T>)
+            }) as FilterQuery<T>,
         ),
       });
     }
@@ -38,28 +38,27 @@ class QueryBuilder<T> {
   // }
 
   filter() {
-  const queryObj = { ...this.query };
-  const excludeFields = ['searchTerm', 'sort', 'page', 'limit', 'fields'];
-  excludeFields.forEach(el => delete queryObj[el]);
+    const queryObj = { ...this.query };
+    const excludeFields = ['searchTerm', 'sort', 'page', 'limit', 'fields'];
+    excludeFields.forEach(el => delete queryObj[el]);
 
-  const minPrice = queryObj.minPrice;
-  const maxPrice = queryObj.maxPrice;
+    const minPrice = queryObj.minPrice;
+    const maxPrice = queryObj.maxPrice;
 
-  delete queryObj.minPrice;
-  delete queryObj.maxPrice;
+    delete queryObj.minPrice;
+    delete queryObj.maxPrice;
 
-  const filterConditions: any = { ...queryObj };
+    const filterConditions: any = { ...queryObj };
 
-  if (minPrice || maxPrice) {
-    filterConditions.price = {};
-    if (minPrice) filterConditions.price.$gte = Number(minPrice);
-    if (maxPrice) filterConditions.price.$lte = Number(maxPrice);
+    if (minPrice || maxPrice) {
+      filterConditions.price = {};
+      if (minPrice) filterConditions.price.$gte = Number(minPrice);
+      if (maxPrice) filterConditions.price.$lte = Number(maxPrice);
+    }
+
+    this.modelQuery = this.modelQuery.find(filterConditions as FilterQuery<T>);
+    return this;
   }
-
-  this.modelQuery = this.modelQuery.find(filterConditions as FilterQuery<T>);
-  return this;
-}
-
 
   //sorting
   sort() {
@@ -95,7 +94,7 @@ class QueryBuilder<T> {
       populateFields.map(field => ({
         path: field,
         select: selectFields[field],
-      }))
+      })),
     );
     return this;
   }
@@ -103,7 +102,7 @@ class QueryBuilder<T> {
   //pagination information
   async getPaginationInfo() {
     const total = await this.modelQuery.model.countDocuments(
-      this.modelQuery.getFilter()
+      this.modelQuery.getFilter(),
     );
     const limit = Number(this?.query?.limit) || 10;
     const page = Number(this?.query?.page) || 1;

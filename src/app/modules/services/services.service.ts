@@ -88,7 +88,7 @@ const getPortfoliosByProviderFromDB = async (provider: string) => {
   if (isExistPortfolios.length === 0) {
     throw new ApiError(
       StatusCodes.BAD_REQUEST,
-      'No portfolios found for the provided service!'
+      'No portfolios found for the provided service!',
     );
   }
 
@@ -108,7 +108,7 @@ const getSinglePortfolioFromDB = async (id: string) => {
 // Update a portfolio by ID
 const updatePortfolioFromDB = async (
   id: string,
-  payload: Partial<IPortfolio>
+  payload: Partial<IPortfolio>,
 ) => {
   const portfolio = await Portfolio.findById(id);
   if (!portfolio) {
@@ -139,7 +139,7 @@ const markRecommendedServices = async () => {
 
   const result = await Service.updateMany(
     { _id: { $in: recommendedServices.map(service => service._id) } },
-    { $set: { isRecommended: true } }
+    { $set: { isRecommended: true } },
   );
 
   return result;
@@ -150,7 +150,7 @@ const markTrendingServices = async () => {
   const daysThreshold = 30;
 
   const dateThreshold = new Date(
-    Date.now() - daysThreshold * 24 * 60 * 60 * 1000
+    Date.now() - daysThreshold * 24 * 60 * 60 * 1000,
   );
 
   // Step 1: Reset all services to not trending
@@ -198,7 +198,7 @@ const markTrendingServices = async () => {
 
   const result = await Service.updateMany(
     { _id: { $in: servicesToUpdate } },
-    { $set: { isTrending: true } }
+    { $set: { isTrending: true } },
   );
 
   return result;

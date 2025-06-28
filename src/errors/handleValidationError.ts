@@ -8,7 +8,7 @@ const handleValidationError = (error: Error.ValidationError) => {
         path: el.path,
         message: el.message,
       };
-    }
+    },
   );
 
   const statusCode = 400;

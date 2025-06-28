@@ -10,10 +10,7 @@ const addReview = catchAsync(
     const userId = req.user.id;
 
     try {
-      const newReview = await ReviewServices.addReviewToService(
-        userId,
-        data
-      );
+      const newReview = await ReviewServices.addReviewToService(userId, data);
       sendResponse(res, {
         success: true,
         statusCode: StatusCodes.CREATED,
@@ -23,11 +20,8 @@ const addReview = catchAsync(
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
-
-
-
 
 const getReviews = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -44,10 +38,8 @@ const getReviews = catchAsync(
     } catch (error) {
       next(error); // Pass error to global error handler
     }
-  }
+  },
 );
-
-
 
 const updateReview = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -56,7 +48,11 @@ const updateReview = catchAsync(
     const userId = req.user._id;
 
     try {
-      const updatedReview = await ReviewServices.updateReviewText(reviewId, userId, reviewText);
+      const updatedReview = await ReviewServices.updateReviewText(
+        reviewId,
+        userId,
+        reviewText,
+      );
       sendResponse(res, {
         success: true,
         statusCode: StatusCodes.OK,
@@ -66,11 +62,11 @@ const updateReview = catchAsync(
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 export const ServiceReviewController = {
   addReview,
   getReviews,
-  updateReview
+  updateReview,
 };
