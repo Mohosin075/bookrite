@@ -17,7 +17,7 @@ router
       USER_ROLES.SUPER_ADMIN,
       USER_ROLES.ADMIN,
       USER_ROLES.USER,
-      USER_ROLES.PROVIDER
+      USER_ROLES.PROVIDER,
     ),
     fileUploadHandler(),
     (req: Request, res: Response, next: NextFunction) => {
@@ -25,27 +25,27 @@ router
         req.body = createCategoryZodSchema.parse(JSON.parse(req.body.data));
       }
       return CategoryController.createCategory(req, res, next);
-    }
+    },
   )
   .get(
     auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.ADMIN, USER_ROLES.USER),
-    CategoryController.getCategory
+    CategoryController.getCategory,
   );
 
 router
   .route('/:id')
   .get(
     auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.ADMIN, USER_ROLES.USER),
-    CategoryController.getSingleCategory
+    CategoryController.getSingleCategory,
   )
   .patch(
     auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.ADMIN),
     validateRequest(updateCategoryZodSchema),
-    CategoryController.updateCategory
+    CategoryController.updateCategory,
   )
   .delete(
     auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.ADMIN),
-    CategoryController.deleeteCategory
+    CategoryController.deleeteCategory,
   );
 
 export const categoryRoutes = router;

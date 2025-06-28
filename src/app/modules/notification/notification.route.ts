@@ -10,16 +10,21 @@ router.route('/').get(
     USER_ROLES.SUPER_ADMIN,
     USER_ROLES.ADMIN,
     USER_ROLES.USER,
-    USER_ROLES.PROVIDER
+    USER_ROLES.PROVIDER,
   ),
 
-  NotificationController.getNotifications
+  NotificationController.getNotifications,
 );
-router.route('/:id').patch(auth(
-    USER_ROLES.SUPER_ADMIN,
-    USER_ROLES.ADMIN,
-    USER_ROLES.USER,
-    USER_ROLES.PROVIDER
-  ), NotificationController.markNotificationAsRead);
+router
+  .route('/:id')
+  .patch(
+    auth(
+      USER_ROLES.SUPER_ADMIN,
+      USER_ROLES.ADMIN,
+      USER_ROLES.USER,
+      USER_ROLES.PROVIDER,
+    ),
+    NotificationController.markNotificationAsRead,
+  );
 
 export const NotificationRoutes = router;

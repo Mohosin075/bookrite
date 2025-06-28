@@ -5,7 +5,7 @@ export interface IBooking {
   user?: Types.ObjectId;
   date: Date;
   startTime: string;
-  status: 'pending' | 'accepted' | 'completed' | 'rejected'| 'canceled';
+  status: 'pending' | 'accepted' | 'completed' | 'rejected' | 'canceled';
   paymentStatus: 'unpaid' | 'paid' | 'refunded';
 }
 

@@ -14,9 +14,9 @@ router
       USER_ROLES.SUPER_ADMIN,
       USER_ROLES.ADMIN,
       USER_ROLES.USER,
-      USER_ROLES.PROVIDER
+      USER_ROLES.PROVIDER,
     ),
-    UserController.getBookmark
+    UserController.getBookmark,
   );
 
 router
@@ -26,10 +26,10 @@ router
       USER_ROLES.SUPER_ADMIN,
       USER_ROLES.ADMIN,
       USER_ROLES.USER,
-      USER_ROLES.PROVIDER
+      USER_ROLES.PROVIDER,
     ),
     validateRequest(UserValidation.addBookmarkZodSchema),
-    UserController.addBookmark
+    UserController.addBookmark,
   );
 
 router
@@ -37,7 +37,7 @@ router
   .patch(
     auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.ADMIN, USER_ROLES.USER),
     validateRequest(UserValidation.removeBookmarkZodSchema),
-    UserController.removeBookmark
+    UserController.removeBookmark,
   );
 
 router
@@ -47,9 +47,9 @@ router
       USER_ROLES.ADMIN,
       USER_ROLES.USER,
       USER_ROLES.SUPER_ADMIN,
-      USER_ROLES.PROVIDER
+      USER_ROLES.PROVIDER,
     ),
-    UserController.getUserProfile
+    UserController.getUserProfile,
   )
   .patch(
     auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.ADMIN, USER_ROLES.USER),
@@ -57,18 +57,18 @@ router
     (req: Request, res: Response, next: NextFunction) => {
       if (req.body.data) {
         req.body = UserValidation.updateUserZodSchema.parse(
-          JSON.parse(req.body.data)
+          JSON.parse(req.body.data),
         );
       }
       return UserController.updateProfile(req, res, next);
-    }
+    },
   );
 
 router
   .route('/')
   .post(
     validateRequest(UserValidation.createUserZodSchema),
-    UserController.createUser
+    UserController.createUser,
   );
 
 router
@@ -78,10 +78,10 @@ router
       USER_ROLES.SUPER_ADMIN,
       USER_ROLES.ADMIN,
       USER_ROLES.USER,
-      USER_ROLES.PROVIDER
+      USER_ROLES.PROVIDER,
     ),
     validateRequest(UserValidation.accessLocationZodSchema),
-    UserController.accessLocation
+    UserController.accessLocation,
   );
 
 export const UserRoutes = router;

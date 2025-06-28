@@ -32,7 +32,6 @@
 
 // export const SocketHelper = { socket };
 
-
 import { Server } from 'socket.io';
 import { Message } from '../app/modules/message/message.model';
 import { OnlineUserTracker } from '../util/onlineUsers';
@@ -64,12 +63,12 @@ const socket = (io: Server) => {
       // ✅ 🔐 New logic: Emit notification separately (non-intrusive)
       const recipientSocketId = OnlineUserTracker.get(recipientId);
       if (recipientSocketId) {
-        io.to(recipientSocketId).emit('notification', {
+        io.to(recipientId).emit('notification', {
           type: 'new_message',
           message: 'You have a new message',
           metadata: {
             chatId,
-            messageId: newMessage._id,
+            messageId: 'sdfksdlf',
           },
         });
       }
@@ -84,4 +83,3 @@ const socket = (io: Server) => {
 };
 
 export const SocketHelper = { socket };
-

@@ -10,7 +10,7 @@ const createBookingFromDB = async (
   serviceId: string,
   userId: string,
   date: Date,
-  startTime: string
+  startTime: string,
 ) => {
   const service = await Service.findById(serviceId);
 
@@ -50,19 +50,19 @@ const createBookingFromDB = async (
     if (!availabilityForDate) {
       throw new ApiError(
         StatusCodes.INTERNAL_SERVER_ERROR,
-        'Availability data is corrupted.'
+        'Availability data is corrupted.',
       );
     }
 
     const existingTime = availabilityForDate.startTimes.find(
-      time => time.start === startTime
+      time => time.start === startTime,
     );
 
     if (existingTime) {
       if (existingTime.isBooked) {
         throw new ApiError(
           StatusCodes.BAD_REQUEST,
-          'Time slot already booked!'
+          'Time slot already booked!',
         );
       }
 
@@ -93,7 +93,7 @@ const createBookingFromDB = async (
   // Create Notification for provider
   const message = `New booking request for "${service.name}" on ${inputDateStr} at ${startTime}`;
 
-  await Notification.create({
+  const res = await Notification.create({
     to: userId,
     from: service.provider,
     type: 'booking_request',
@@ -105,6 +105,8 @@ const createBookingFromDB = async (
       time: startTime,
     },
   });
+
+  // io.to(service.provider.toString()).emit('notification', res);
 
   return booking;
 };
@@ -123,7 +125,7 @@ const getBookingsByUserFromDB = async (userId: string, status: string) => {
   if (bookings.length === 0) {
     throw new ApiError(
       StatusCodes.NOT_FOUND,
-      'No bookings found for this user!'
+      'No bookings found for this user!',
     );
   }
 
@@ -154,7 +156,7 @@ const getBookingsByServiceFromDB = async (serviceId: string) => {
   if (bookings.length === 0) {
     throw new ApiError(
       StatusCodes.NOT_FOUND,
-      'No bookings found for this service!'
+      'No bookings found for this service!',
     );
   }
 
@@ -170,14 +172,14 @@ const acceptBookingFromDB = async (bookingId: string, providerId: string) => {
   if (!booking) {
     throw new ApiError(
       StatusCodes.NOT_FOUND,
-      'Booking not found or unauthorized.'
+      'Booking not found or unauthorized.',
     );
   }
 
   if (booking.status === 'accepted' || booking.status === 'canceled') {
     throw new ApiError(
       StatusCodes.BAD_REQUEST,
-      'Booking is already processed.'
+      'Booking is already processed.',
     );
   }
 
@@ -193,24 +195,24 @@ const acceptBookingFromDB = async (bookingId: string, providerId: string) => {
   const updatedBooking = await Booking.findByIdAndUpdate(
     bookingId,
     { status: 'accepted' },
-    { new: true }
+    { new: true },
   );
 
   // Update the time slot in the service (mark as booked)
   const serviceDoc = await Service.findById(booking.service._id);
   const availabilityForDate = serviceDoc?.availability?.find(
-    a => a.date === booking.date
+    a => a.date === booking.date,
   );
 
   if (!availabilityForDate) {
     throw new ApiError(
       StatusCodes.NOT_FOUND,
-      'Availability not found for this date!'
+      'Availability not found for this date!',
     );
   }
 
   const existingTime = availabilityForDate.startTimes.find(
-    t => t.start === booking.startTime
+    t => t.start === booking.startTime,
   );
   if (!existingTime) {
     throw new ApiError(StatusCodes.NOT_FOUND, 'Time slot not found!');
@@ -235,14 +237,14 @@ const rejectBookingFromDB = async (bookingId: string, providerId: string) => {
   if (!booking) {
     throw new ApiError(
       StatusCodes.NOT_FOUND,
-      'Booking not found or unauthorized.'
+      'Booking not found or unauthorized.',
     );
   }
 
   if (booking.status === 'rejected' || booking.status === 'canceled') {
     throw new ApiError(
       StatusCodes.BAD_REQUEST,
-      'Booking is already rejected or canceled.'
+      'Booking is already rejected or canceled.',
     );
   }
 
@@ -250,24 +252,24 @@ const rejectBookingFromDB = async (bookingId: string, providerId: string) => {
   const updatedBooking = await Booking.findByIdAndUpdate(
     bookingId,
     { status: 'rejected' },
-    { new: true }
+    { new: true },
   );
 
   // Update the time slot in the service (mark as not booked)
   const serviceDoc = await Service.findById(booking.service._id);
   const availabilityForDate = serviceDoc?.availability?.find(
-    a => a.date === booking.date
+    a => a.date === booking.date,
   );
 
   if (!availabilityForDate) {
     throw new ApiError(
       StatusCodes.NOT_FOUND,
-      'Availability not found for this date!'
+      'Availability not found for this date!',
     );
   }
 
   const existingTime = availabilityForDate.startTimes.find(
-    t => t.start === booking.startTime
+    t => t.start === booking.startTime,
   );
   if (!existingTime) {
     throw new ApiError(StatusCodes.NOT_FOUND, 'Time slot not found!');
@@ -286,7 +288,7 @@ const rejectBookingFromDB = async (bookingId: string, providerId: string) => {
 const completeOrCancelBookingFromDB = async (
   bookingId: string,
   providerId: string,
-  action: 'completed' | 'canceled'
+  action: 'completed' | 'canceled',
 ) => {
   const booking = await Booking.findById(bookingId)
     .populate('service')
@@ -296,21 +298,21 @@ const completeOrCancelBookingFromDB = async (
   if (!booking) {
     throw new ApiError(
       StatusCodes.NOT_FOUND,
-      'Booking not found or unauthorized.'
+      'Booking not found or unauthorized.',
     );
   }
 
   if (booking.status === 'completed' || booking.status === 'canceled') {
     throw new ApiError(
       StatusCodes.BAD_REQUEST,
-      'Booking is already processed.'
+      'Booking is already processed.',
     );
   }
 
   const updatedBooking = await Booking.findByIdAndUpdate(
     bookingId,
     { status: action === 'completed' ? 'completed' : 'canceled' },
-    { new: true }
+    { new: true },
   );
 
   const serviceDoc = await Service.findById(booking.service._id);
@@ -320,18 +322,18 @@ const completeOrCancelBookingFromDB = async (
   }
 
   const availabilityForDate = serviceDoc.availability?.find(
-    a => a.date === booking.date
+    a => a.date === booking.date,
   );
 
   if (!availabilityForDate) {
     throw new ApiError(
       StatusCodes.NOT_FOUND,
-      'Availability not found for this date!'
+      'Availability not found for this date!',
     );
   }
 
   const existingTime = availabilityForDate.startTimes.find(
-    t => t.start === booking.startTime
+    t => t.start === booking.startTime,
   );
 
   if (!existingTime) {

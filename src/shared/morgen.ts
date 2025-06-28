@@ -5,7 +5,7 @@ import { errorLogger, logger } from './logger';
 
 morgan.token(
   'message',
-  (req: Request, res: Response) => res?.locals.errorMessage || ''
+  (req: Request, res: Response) => res?.locals.errorMessage || '',
 );
 
 const getIpFormat = () =>

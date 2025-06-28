@@ -38,10 +38,25 @@ export interface INotificationBase {
 
 export type INotification =
   | (INotificationBase & { type: 'booking_request'; metadata: BookingMetadata })
-  | (INotificationBase & { type: 'booking_accepted'; metadata: BookingMetadata })
-  | (INotificationBase & { type: 'booking_rejected'; metadata: BookingMetadata })
-  | (INotificationBase & { type: 'booking_reminder'; metadata: BookingMetadata })
+  | (INotificationBase & {
+      type: 'booking_accepted';
+      metadata: BookingMetadata;
+    })
+  | (INotificationBase & {
+      type: 'booking_rejected';
+      metadata: BookingMetadata;
+    })
+  | (INotificationBase & {
+      type: 'booking_reminder';
+      metadata: BookingMetadata;
+    })
   | (INotificationBase & { type: 'new_message'; metadata: MessageMetadata })
   | (INotificationBase & { type: 'new_review'; metadata: ReviewMetadata })
-  | (INotificationBase & { type: 'service_deactivated'; metadata: AdminMetadata })
-  | (INotificationBase & { type: 'admin_announcement'; metadata: AdminMetadata });
+  | (INotificationBase & {
+      type: 'service_deactivated';
+      metadata: AdminMetadata;
+    })
+  | (INotificationBase & {
+      type: 'admin_announcement';
+      metadata: AdminMetadata;
+    });

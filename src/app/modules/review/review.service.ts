@@ -50,17 +50,12 @@ const addReviewToService = async (userId: string, data: Partial<IReview>) => {
   if (!updatedService) {
     throw new ApiError(
       StatusCodes.INTERNAL_SERVER_ERROR,
-      'Error updating the service with new review.'
+      'Error updating the service with new review.',
     );
   }
 
   return newReview;
 };
-
-
-
-
-
 
 const getReviewsByService = async (serviceId: string) => {
   const service = await Service.findById(serviceId);
@@ -70,19 +65,24 @@ const getReviewsByService = async (serviceId: string) => {
   }
 
   const reviews = await Review.find({ service: serviceId })
-    .populate('user', 'name email') 
+    .populate('user', 'name email')
     .exec();
 
   if (!reviews.length) {
-    throw new ApiError(StatusCodes.NOT_FOUND, 'No reviews found for this service!');
+    throw new ApiError(
+      StatusCodes.NOT_FOUND,
+      'No reviews found for this service!',
+    );
   }
 
   return reviews;
 };
 
-
-
-const updateReviewText = async (reviewId: string, userId: string, newReviewText: string) => {
+const updateReviewText = async (
+  reviewId: string,
+  userId: string,
+  newReviewText: string,
+) => {
   const review = await Review.findById(reviewId);
 
   if (!review) {
@@ -93,10 +93,10 @@ const updateReviewText = async (reviewId: string, userId: string, newReviewText:
   await review.save();
 
   return review;
-}; 
+};
 
 export const ReviewServices = {
   addReviewToService,
   getReviewsByService,
-  updateReviewText
+  updateReviewText,
 };

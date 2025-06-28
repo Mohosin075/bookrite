@@ -14,9 +14,9 @@ const createStripePayment = catchAsync(
       message: 'Stripe payment initiated successfully',
       data: result,
     });
-  }
+  },
 );
 
 export const PaymentController = {
-  createStripePayment
+  createStripePayment,
 };

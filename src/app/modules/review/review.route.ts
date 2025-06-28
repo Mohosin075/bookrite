@@ -11,17 +11,14 @@ router.post(
   '/',
   auth(USER_ROLES.USER),
   validateRequest(createReviewZodSchema),
-  ServiceReviewController.addReview
+  ServiceReviewController.addReview,
 );
 
-router.get(
-  '/:serviceId',
-  ServiceReviewController.getReviews
-);
+router.get('/:serviceId', ServiceReviewController.getReviews);
 router.patch(
   '/review/:reviewId',
   auth(USER_ROLES.USER),
-  ServiceReviewController.updateReview
+  ServiceReviewController.updateReview,
 );
 
 export const serviceReviewRoutes = router;

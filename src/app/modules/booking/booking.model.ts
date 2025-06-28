@@ -4,7 +4,7 @@ import { IBooking } from './booking.interface';
 const bookingSchema = new Schema(
   {
     service: { type: Schema.Types.ObjectId, ref: 'Service', required: true },
-    user: { type: Schema.Types.ObjectId, ref: 'User'},
+    user: { type: Schema.Types.ObjectId, ref: 'User' },
     date: { type: Date, required: true },
     startTime: { type: String, required: true },
     status: {
@@ -20,7 +20,7 @@ const bookingSchema = new Schema(
       required: true,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 bookingSchema.index({ service: 1 });

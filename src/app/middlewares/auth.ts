@@ -20,7 +20,7 @@ const auth =
         //verify token
         const verifyUser = jwtHelper.verifyToken(
           token,
-          config.jwt.jwt_secret as Secret
+          config.jwt.jwt_secret as Secret,
         );
         //set user to header
         req.user = verifyUser;
@@ -29,7 +29,7 @@ const auth =
         if (roles.length && !roles.includes(verifyUser.role)) {
           throw new ApiError(
             StatusCodes.FORBIDDEN,
-            "You don't have permission to access this api"
+            "You don't have permission to access this api",
           );
         }
 

@@ -1,5 +1,5 @@
-import { Request, Response } from "express";
-import { Chat } from "./chat.model";
+import { Request, Response } from 'express';
+import { Chat } from './chat.model';
 
 const createChat = async (req: Request, res: Response) => {
   try {
@@ -23,7 +23,7 @@ const userChats = async (req: Request, res: Response) => {
   try {
     const chat = await Chat.find({
       participants: { $in: [req.params.userId] },
-    }).populate("participants");
+    }).populate('participants');
 
     res.status(200).json(chat);
   } catch (error) {

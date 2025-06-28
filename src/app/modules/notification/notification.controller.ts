@@ -20,7 +20,7 @@ const getNotifications = catchAsync(
       message: 'Notifications fetched successfully',
       data: result,
     });
-  }
+  },
 );
 
 const markNotificationAsRead = catchAsync(
@@ -35,7 +35,7 @@ const markNotificationAsRead = catchAsync(
       message: 'Notification marked as read',
       data: result,
     });
-  }
+  },
 );
 
 export const NotificationController = {

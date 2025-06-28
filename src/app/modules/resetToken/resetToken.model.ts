@@ -16,12 +16,12 @@ const resetTokenSchema = new Schema<IResetToken, ResetTokenModel>(
       required: true,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 //token check
 resetTokenSchema.statics.isExistToken = async (
-  token: string
+  token: string,
 ): Promise<IResetToken | null> => {
   return await ResetToken.findOne({ token });
 };
@@ -38,5 +38,5 @@ resetTokenSchema.statics.isExpireToken = async (token: string) => {
 
 export const ResetToken = model<IResetToken, ResetTokenModel>(
   'Token',
-  resetTokenSchema
+  resetTokenSchema,
 );

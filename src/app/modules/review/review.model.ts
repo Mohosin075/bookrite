@@ -9,11 +9,10 @@ const reviewSchema = new Schema<IReview>(
     reviewText: { type: String, required: true },
     tip: { type: Number, default: 0 },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 reviewSchema.index({ user: 1 });
 reviewSchema.index({ service: 1 });
-
 
 export const Review = model<IReview>('Review', reviewSchema);

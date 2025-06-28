@@ -24,7 +24,7 @@ router
       return serviceController.createService(req, res, next);
     },
 
-    serviceController.createService
+    serviceController.createService,
   )
   .get(serviceController.getServices);
 
@@ -44,11 +44,11 @@ router
       }
       return serviceController.updateServices(req, res, next);
     },
-    serviceController.updateServices
+    serviceController.updateServices,
   )
   .delete(
     auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.ADMIN, USER_ROLES.PROVIDER),
-    serviceController.deleteServices
+    serviceController.deleteServices,
   );
 
 router.route('/category/:id').get(serviceController.getServiceByCategory);
@@ -70,7 +70,7 @@ router.route('/portfolio').post(
     return serviceController.createPortfolio(req, res, next);
   },
 
-  serviceController.createPortfolio
+  serviceController.createPortfolio,
 );
 
 router
@@ -87,11 +87,11 @@ router
       return serviceController.updatePortfolio(req, res, next);
     },
 
-    serviceController.updatePortfolio
+    serviceController.updatePortfolio,
   )
   .delete(
     auth(USER_ROLES.PROVIDER, USER_ROLES.ADMIN, USER_ROLES.SUPER_ADMIN),
-    serviceController.deletePortfolio
+    serviceController.deletePortfolio,
   );
 
 export const productRoutes = router;

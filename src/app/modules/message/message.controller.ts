@@ -1,5 +1,5 @@
-import { Request, Response } from "express";
-import { Message } from "./message.model";
+import { Request, Response } from 'express';
+import { Message } from './message.model';
 
 const createMessage = async (req: Request, res: Response) => {
   try {
@@ -16,7 +16,7 @@ const getMessages = async (req: Request, res: Response) => {
   try {
     const chatId = req.params.chatId;
 
-    const result = await Message.find({ chatId }).populate('senderId').exec();;
+    const result = await Message.find({ chatId }).populate('senderId').exec();
 
     res.status(200).json(result);
   } catch (error) {

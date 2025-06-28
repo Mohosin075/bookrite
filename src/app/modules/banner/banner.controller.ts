@@ -18,7 +18,7 @@ const createBanner = catchAsync(
       message: 'Banner created successfully.',
       data: result,
     });
-  }
+  },
 );
 
 const getBanner = catchAsync(
@@ -31,7 +31,7 @@ const getBanner = catchAsync(
       message: 'Banner data retrieved successfully',
       data: result,
     });
-  }
+  },
 );
 
 const updateBanner = catchAsync(
@@ -48,7 +48,7 @@ const updateBanner = catchAsync(
       message: 'Banner data updated successfully',
       data: result,
     });
-  }
+  },
 );
 
 const deleeteBanner = catchAsync(
@@ -62,7 +62,7 @@ const deleeteBanner = catchAsync(
       message: 'Banner data deleted successfully',
       data: result,
     });
-  }
+  },
 );
 
 export const BannerController = {

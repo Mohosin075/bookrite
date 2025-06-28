@@ -18,11 +18,11 @@ router
     (req: Request, res: Response, next: NextFunction) => {
       if (req.body.data) {
         req.body = createBannerValidationSchema.parse(
-          JSON.parse(req.body.data)
+          JSON.parse(req.body.data),
         );
       }
       return BannerController.createBanner(req, res, next);
-    }
+    },
   )
   .get(BannerController.getBanner);
 
@@ -34,16 +34,16 @@ router
     (req: Request, res: Response, next: NextFunction) => {
       if (req.body.data) {
         req.body = updateBannerValidationSchema.parse(
-          JSON.parse(req.body.data)
+          JSON.parse(req.body.data),
         );
       }
       return BannerController.updateBanner(req, res, next);
     },
-    BannerController.updateBanner
+    BannerController.updateBanner,
   )
   .delete(
     auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.ADMIN),
-    BannerController.deleeteBanner
+    BannerController.deleeteBanner,
   );
 
 export const bannerRoutes = router;
