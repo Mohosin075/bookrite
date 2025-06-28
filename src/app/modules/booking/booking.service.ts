@@ -2,9 +2,7 @@ import { StatusCodes } from 'http-status-codes';
 import ApiError from '../../../errors/ApiError';
 import { Service } from '../services/services.model';
 import Booking from './booking.model';
-import { IService } from '../services/services.interface';
-import { Types } from 'mongoose';
-import { Notification } from '../notification/notification.model';
+
 
 const createBookingFromDB = async (
   serviceId: string,
@@ -90,23 +88,6 @@ const createBookingFromDB = async (
     paymentStatus: 'unpaid',
   });
 
-  // Create Notification for provider
-  const message = `New booking request for "${service.name}" on ${inputDateStr} at ${startTime}`;
-
-  const res = await Notification.create({
-    to: userId,
-    from: service.provider,
-    type: 'booking_request',
-    message,
-    metadata: {
-      bookingId: booking._id,
-      serviceId,
-      date,
-      time: startTime,
-    },
-  });
-
-  // io.to(service.provider.toString()).emit('notification', res);
 
   return booking;
 };

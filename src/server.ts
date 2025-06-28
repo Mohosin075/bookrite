@@ -5,7 +5,7 @@ import app from './app';
 import config from './config';
 import { seedSuperAdmin } from './DB/seedAdmin';
 import { errorLogger, logger } from './shared/logger';
-import { SocketHelper } from './helpers/socketHelper';
+import { socketHelper } from './helpers/socketHelper';
 
 //uncaught exception
 process.on('uncaughtException', error => {
@@ -38,7 +38,7 @@ async function main() {
         origin: '*',
       },
     });
-    SocketHelper.socket(io);
+    socketHelper.socket(io);
     //@ts-ignore
     global.io = io;
   } catch (error) {

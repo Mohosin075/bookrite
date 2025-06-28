@@ -7,9 +7,6 @@ import { bannerRoutes } from '../app/modules/banner/banner.route';
 import { bookingRoutes } from '../app/modules/booking/booking.route';
 import { serviceReviewRoutes } from '../app/modules/review/review.route';
 import { paymentRoutes } from '../app/modules/payment/payment.route';
-import { ChatRoutes } from '../app/modules/chat/chat.route';
-import { MessageRoutes } from '../app/modules/message/message.route';
-import { NotificationRoutes } from '../app/modules/notification/notification.route';
 const router = express.Router();
 
 const apiRoutes = [
@@ -44,18 +41,6 @@ const apiRoutes = [
   {
     path: '/payments',
     route: paymentRoutes,
-  },
-  {
-    path: '/chat',
-    route: ChatRoutes,
-  },
-  {
-    path: '/message',
-    route: MessageRoutes,
-  },
-  {
-    path: '/notifications',
-    route: NotificationRoutes,
   },
 ];
 
