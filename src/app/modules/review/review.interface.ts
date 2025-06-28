@@ -1,6 +1,6 @@
 import { Model, Types } from 'mongoose';
 
-export interface IReview {
+export type IReview = {
   user: Types.ObjectId;
   service: Types.ObjectId;
   rating: number;
