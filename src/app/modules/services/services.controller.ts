@@ -37,6 +37,24 @@ const getServices = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const getServicesByProvider = catchAsync(
+  async (req: Request, res: Response) => {
+    const userId = req.user.id;
+
+    const result = await ServiceServices.getServicesByProviderFromDB(
+      userId,
+      req.query,
+    );
+
+    sendResponse(res, {
+      success: true,
+      statusCode: StatusCodes.OK,
+      message: 'Service data retrieved successfully.',
+      data: result,
+    });
+  },
+);
+
 const getSingleServices = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
 
@@ -230,4 +248,5 @@ export const serviceController = {
 
   getRecommendedServices,
   getTrendingServices,
+  getServicesByProvider
 };
