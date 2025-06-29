@@ -7,13 +7,44 @@ import { JwtPayload } from 'jsonwebtoken';
 import { Types } from 'mongoose';
 import Stripe from 'stripe';
 import Booking from '../booking/booking.model';
+import unlinkFile from '../../../shared/unlinkFile';
 
 const createServiceFromDB = async (data: IService) => {
-  return await Service.create(data);
+  const result = await Service.create(data);
+  if (!result) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, 'Service creation failed!');
+  }
+  return result;
 };
 
 const getServicesFromDB = async (query: Record<string, any>) => {
   const baseQuery = Service.find({});
+
+  const queryBuilder = new QueryBuilder(baseQuery, query)
+    .search(['name', 'description'])
+    .filter()
+    .sort()
+    .fields()
+    .paginate()
+    .populate(['category', 'provider'], {});
+
+  const products = await queryBuilder.modelQuery;
+
+  const meta = await queryBuilder.getPaginationInfo();
+
+  return {
+    meta,
+    data: products,
+  };
+};
+const getServicesByProviderFromDB = async (
+  userId: string,
+  query: Record<string, any>,
+): Promise<{
+  meta: any;
+  data: IService[];
+}> => {
+  const baseQuery = Service.find({ provider: userId });
 
   const queryBuilder = new QueryBuilder(baseQuery, query)
     .search(['name', 'description'])
@@ -60,7 +91,16 @@ const updateServiceFromDB = async (id: string, payload: Partial<IService>) => {
     throw new ApiError(StatusCodes.BAD_REQUEST, 'Service doesnt exist!');
   }
 
-  return await Service.findByIdAndUpdate(id, payload, { new: true });
+  const result = await Service.findByIdAndUpdate(id, payload, { new: true });
+
+  if(payload.image && result?.image && payload.image !== isExistServices.image) {
+    unlinkFile(isExistServices.image);
+  }
+
+  if (!result) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, 'Service update failed!');
+  }
+  return result;
 };
 
 const deleteServiceFromDB = async (id: string) => {
@@ -237,4 +277,5 @@ export const ServiceServices = {
 
   getRecommendedServicesFromDB,
   getTrendingServicesFromDB,
+  getServicesByProviderFromDB,
 };

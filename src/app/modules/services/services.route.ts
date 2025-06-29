@@ -31,6 +31,11 @@ router
 router.route('/recommended').get(serviceController.getRecommendedServices);
 router.route('/trending').get(serviceController.getTrendingServices);
 
+// for provider
+router
+  .route('/provider')
+  .get(auth(USER_ROLES.PROVIDER), serviceController.getServicesByProvider);
+
 router
   .route('/:id')
   .get(serviceController.getSingleServices)
@@ -50,6 +55,8 @@ router
     auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.ADMIN, USER_ROLES.PROVIDER),
     serviceController.deleteServices,
   );
+
+
 
 router.route('/category/:id').get(serviceController.getServiceByCategory);
 
