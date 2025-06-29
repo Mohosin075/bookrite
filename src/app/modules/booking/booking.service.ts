@@ -3,113 +3,121 @@ import ApiError from '../../../errors/ApiError';
 import { Service } from '../services/services.model';
 import Booking from './booking.model';
 import { Notification } from '../notification/notification.model';
+import mongoose from 'mongoose';
 
-
-const createBookingFromDB = async (
+export const createBookingFromDB = async (
   serviceId: string,
   userId: string,
   date: Date,
   startTime: string,
 ) => {
-  const service = await Service.findById(serviceId);
+  const session = await mongoose.startSession();
+  session.startTransaction();
 
-  if (!service) {
-    throw new ApiError(StatusCodes.BAD_REQUEST, 'Service not found!');
-  }
+  try {
+    const service = await Service.findById(serviceId).session(session);
 
-  // Ensure availability array exists
-  if (!service.availability) {
-    service.availability = [];
-  }
-
-  // Convert input date to date-only string for comparison
-  const inputDateStr = new Date(date).toISOString().slice(0, 10);
-
-  // Find availability index by date (compare by date string)
-  const availabilityIndex = service.availability.findIndex(avail => {
-    const availDateStr = new Date(avail.date).toISOString().slice(0, 10);
-    return availDateStr === inputDateStr;
-  });
-
-  if (availabilityIndex === -1) {
-    // If date not found, add a new availability entry
-    service.availability.push({
-      date,
-      startTimes: [
-        {
-          start: startTime,
-          isBooked: true,
-          status: 'pending',
-        },
-      ],
-    });
-  } else {
-    const availabilityForDate = service.availability[availabilityIndex];
-
-    if (!availabilityForDate) {
-      throw new ApiError(
-        StatusCodes.INTERNAL_SERVER_ERROR,
-        'Availability data is corrupted.',
-      );
+    if (!service) {
+      throw new ApiError(StatusCodes.BAD_REQUEST, 'Service not found!');
     }
 
-    const existingTime = availabilityForDate.startTimes.find(
-      time => time.start === startTime,
-    );
+    if (!service.availability) {
+      service.availability = [];
+    }
 
-    if (existingTime) {
-      if (existingTime.isBooked) {
+    const inputDateStr = new Date(date).toISOString().slice(0, 10);
+
+    const availabilityIndex = service.availability.findIndex(avail => {
+      const availDateStr = new Date(avail.date).toISOString().slice(0, 10);
+      return availDateStr === inputDateStr;
+    });
+
+    if (availabilityIndex === -1) {
+      service.availability.push({
+        date,
+        startTimes: [
+          {
+            start: startTime,
+            isBooked: true,
+            status: 'pending',
+          },
+        ],
+      });
+    } else {
+      const availabilityForDate = service.availability[availabilityIndex];
+
+      if (!availabilityForDate) {
         throw new ApiError(
-          StatusCodes.BAD_REQUEST,
-          'Time slot already booked!',
+          StatusCodes.INTERNAL_SERVER_ERROR,
+          'Availability data is corrupted.',
         );
       }
 
-      existingTime.isBooked = true;
-      existingTime.status = 'pending';
-    } else {
-      availabilityForDate.startTimes.push({
-        start: startTime,
-        isBooked: true,
-        status: 'pending',
-      });
+      const existingTime = availabilityForDate.startTimes.find(
+        time => time.start === startTime,
+      );
+
+      if (existingTime) {
+        if (existingTime.isBooked) {
+          throw new ApiError(
+            StatusCodes.BAD_REQUEST,
+            'Time slot already booked!',
+          );
+        }
+
+        existingTime.isBooked = true;
+        existingTime.status = 'pending';
+      } else {
+        availabilityForDate.startTimes.push({
+          start: startTime,
+          isBooked: true,
+          status: 'pending',
+        });
+      }
     }
+
+    await service.save({ session });
+
+    const booking = await Booking.create(
+      [
+        {
+          service: serviceId,
+          user: userId,
+          date,
+          startTime,
+          status: 'pending',
+          paymentStatus: 'unpaid',
+        },
+      ],
+      { session },
+    );
+
+    const notification = await Notification.create(
+      [
+        {
+          text: 'You have a new chat message.',
+          referenceId: booking[0]._id,
+          screen: 'RESERVATION',
+        },
+      ],
+      { session },
+    );
+
+    // @ts-ignore
+    const socketIo = global.io;
+    if (socketIo && booking[0].user) {
+      socketIo.emit(`notification::${booking[0].user}`, notification[0]);
+    }
+
+    await session.commitTransaction();
+    return booking[0];
+  } catch (error) {
+    console.log({ error });
+    await session.abortTransaction();
+    throw error; 
+  } finally {
+    session.endSession();
   }
-
-
-  // Save updated service availability
-  await service.save();
-
-  // Create the booking
-  const booking = await Booking.create({
-    service: serviceId,
-    user: userId,
-    date,
-    startTime,
-    status: 'pending',
-    paymentStatus: 'unpaid',
-  });
-
-  const NotificationData ={
-  text: "You have a new chat message.",
-  referenceId: booking._id,
-  screen: "RESERVATION"
-}
-
-
-
-    // sent notification
-  const result = await Notification.create(NotificationData);
-
-  //@ts-ignore
-  const socketIo = global.io;
-
-  // Fix: payload is not defined, use booking.user or booking.receiver if available
-  if (socketIo && booking.user) {
-    socketIo.emit(`notification::${booking.user}`, result);
-  }
-
-  return booking;
 };
 
 // Get all bookings for a user
