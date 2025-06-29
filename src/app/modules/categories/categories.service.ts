@@ -2,6 +2,7 @@ import { StatusCodes } from 'http-status-codes';
 import ApiError from '../../../errors/ApiError';
 import { ICategory } from './categories.interface';
 import { Category } from './categories.model';
+import unlinkFile from '../../../shared/unlinkFile';
 
 // create category
 const createCategoryToDB = async (data: ICategory) => {
@@ -11,18 +12,30 @@ const createCategoryToDB = async (data: ICategory) => {
   }
 
   const createdCategory = await Category.create(data);
+
+  if (!createdCategory) {
+    if (data.image) {
+      unlinkFile(data.image);
+    }
+    throw new ApiError(StatusCodes.BAD_REQUEST, 'Category creation failed!');
+  }
+
   return createdCategory;
 };
 
 // get categorries
 const getCategoriesFromDB = async () => {
-  const categories = await Category.find();
+  const categories = await Category.find()
+    .select('-__v -createdAt -updatedAt')
+    .sort({ createdAt: -1 });
   return categories;
 };
 
 // get single category
 const getSingleCategoryFromDB = async (id: string) => {
-  const isExistCategory = await Category.findById(id);
+  const isExistCategory = await Category.findById(id).select(
+    '-__v -createdAt -updatedAt',
+  );
   if (!isExistCategory) {
     throw new ApiError(StatusCodes.BAD_REQUEST, 'Category doesnt exist!');
   }
@@ -40,9 +53,18 @@ const updateCategoryFromDB = async (
     throw new ApiError(StatusCodes.BAD_REQUEST, 'Category doesnt exist!');
   }
 
+  if (payload.image && isExistCategory.image) {
+    unlinkFile(isExistCategory.image);
+  }
+
   const updateCategory = await Category.findByIdAndUpdate(id, payload, {
     new: true,
   });
+
+  if (!updateCategory) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, 'Category update failed!');
+  }
+
   return updateCategory;
 };
 
