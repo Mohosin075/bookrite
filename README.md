@@ -1,6 +1,6 @@
 # Project Name
 
-## noSQL Backend Template
+## noSQL Backend Template 
 
 This is a template project for backend development using Typescript, Node.js, Express, Mongoose, Bcrypt, JWT, NodeMailer, Multer, ESLint, and Prettier. The aim is to reduce setup time for new backend projects.
 
