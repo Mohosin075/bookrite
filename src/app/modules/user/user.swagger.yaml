@@ -1,0 +1,223 @@
+tags:
+  - name: Users
+    description: User management routes
+
+paths:
+  /user:
+    post:
+      summary: Create a new user
+      description: Creates a new user and sends an OTP to their email.
+      tags:
+        - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - email
+                - role
+                - contact
+                - password
+                - location
+              properties:
+                name:
+                  type: string
+                  example: "John Doe"
+                email:
+                  type: string
+                  example: "john@example.com"
+                role:
+                  type: string
+                  enum: [SUPER_ADMIN, ADMIN, USER, PROVIDER]
+                  example: "USER"
+                contact:
+                  type: string
+                  example: "+8801712345678"
+                password:
+                  type: string
+                  example: "StrongPassword123"
+                location:
+                  type: string
+                  example: "Dhaka, Bangladesh"
+      responses:
+        '200':
+          description: User created successfully
+          content:
+            application/json:
+              example:
+                success: true
+                statusCode: 200
+                message: "User created successfully"
+                data:
+                  _id: "615f1b1b1b1b1b1b1b1b1b1b"
+                  name: "John Doe"
+                  email: "john@example.com"
+                  role: "USER"
+                  contact: "+8801712345678"
+                  location: "Dhaka, Bangladesh"
+                  islocationGranted: false
+                  verified: false
+                  status: "active"
+                  createdAt: "2025-07-19T10:00:00.000Z"
+                  updatedAt: "2025-07-19T12:00:00.000Z"
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              example:
+                success: false
+                statusCode: 400
+                message: "Validation failed"
+                errorMessages:
+                  - path: "contact"
+                    message: "Contact is required"
+                  - path: "password"
+                    message: "Password is required"
+                  - path: "location"
+                    message: "Location is required"
+
+  /user/profile:
+    get:
+      summary: Get user profile
+      description: Retrieves the authenticated user's profile data.
+      tags:
+        - Users
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Profile data retrieved successfully
+          content:
+            application/json:
+              example:
+                success: true
+                statusCode: 200
+                message: "Profile data retrieved successfully"
+                data:
+                  _id: "615f1b1b1b1b1b1b1b1b1b1b"
+                  name: "John Doe"
+                  email: "john@example.com"
+                  role: "USER"
+                  contact: "+8801712345678"
+                  location: "Dhaka, Bangladesh"
+                  islocationGranted: false
+                  verified: false
+                  status: "active"
+                  bookmarks:
+                    - "615f1b1b1b1b1b1b1b1b1b1c"
+                  bankAccount:
+                    accountNumber: "123456789"
+                    bankName: "Bank of Swagger"
+                    routingNumber: "987654321"
+                  plan:
+                    type: "premium"
+                    expiresAt: "2025-12-31T23:59:59.000Z"
+                  createdAt: "2025-07-19T10:00:00.000Z"
+                  updatedAt: "2025-07-19T12:00:00.000Z"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              example:
+                success: false
+                statusCode: 401
+                message: "Unauthorized"
+
+
+    patch:
+      summary: Update user profile
+      description: |
+        Updates the authenticated user's profile.
+        This endpoint accepts `multipart/form-data` for file uploads.
+        The JSON data should be sent in a `data` field as a JSON string.
+      tags:
+        - Users
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                image:
+                  type: string
+                  format: binary
+                data:
+                  type: string
+                  description: JSON stringified user update data
+                  example: |
+                    {
+                      "name": "John Updated",
+                      "contact": "+8801712345678",
+                      "location": "Chittagong, Bangladesh"
+                    }
+      responses:
+        '200':
+          description: Profile updated successfully
+          content:
+            application/json:
+              example:
+                success: true
+                statusCode: 200
+                message: "Profile updated successfully"
+                data:
+                  _id: "615f1b1b1b1b1b1b1b1b1b1b"
+                  name: "John Updated"
+                  contact: "+8801712345678"
+                  location: "Chittagong, Bangladesh"
+                  image: "https://i.ibb.co/z5YHLV9/updated-profile.png"
+                  role: "USER"
+                  islocationGranted: true
+                  verified: true
+                  status: "active"
+                  updatedAt: "2025-07-19T12:00:00.000Z"
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              example:
+                success: false
+                statusCode: 400
+                message: "Validation failed"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              example:
+                success: false
+                statusCode: 401
+                message: "Unauthorized"
+
+  /user/bookmark:
+    get:
+      summary: Get user bookmarks
+      description: Retrieves the list of bookmarks for the authenticated user.
+      tags:
+        - Users
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Bookmark data retrieved successfully
+          content:
+            application/json:
+              example:
+                success: true
+                statusCode: 200
+                message: "Bookmark data retrieved successfully"
+                data:
+                  - "615f1b1b1b1b1b1b1b1b1b1c"
+                  - "615f1b1b1b1b1b1b1b1b1b1d"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              example:
+                success: false
+                statusCode: 401
+                message: "Unauthorized"

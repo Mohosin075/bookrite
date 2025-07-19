@@ -5,8 +5,14 @@ import globalErrorHandler from './app/middlewares/globalErrorHandler';
 import router from './routes';
 import { Morgan } from './shared/morgen';
 import './tasks/cronTasks';
-import axios from 'axios';
-const app = express();
+import './check'
+// import axios from 'axios';
+import footballRoute from './check';
+import swaggerUi from "swagger-ui-express";
+import { swaggerSpec } from './swagger/swaggerConfig';
+export const app = express();
+
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 //morgan
 app.use(Morgan.successHandler);
@@ -26,22 +32,7 @@ app.use(express.static('uploads'));
 
 //router
 app.use('/api/v1', router);
-
-// app.get("/api/football/teams", async (req, res) => {
-//   try {
-//     const response = await axios.get(
-//       "https://api.football-data.org/v4/competitions/PL/teams",
-//       {
-//         headers: {
-//           "X-Auth-Token": "8ed2a374d95c46a797a5ac55e7b37b6d"
-//         }
-//       }
-//     );
-//     res.json(response.data);
-//   } catch (err) {
-//     res.status(500).json({ error: "Error fetching data" });
-//   }
-// });
+app.use(footballRoute);
 
 
 //live response
