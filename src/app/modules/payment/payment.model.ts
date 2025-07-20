@@ -5,6 +5,7 @@ const paymentSchema = new Schema<IPayment>(
   {
     user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     orderId: { type: Schema.Types.ObjectId, ref: 'Order' },
+
     amount: { type: Number, required: true },
     currency: { type: String, default: 'USD' },
     method: {
@@ -12,12 +13,14 @@ const paymentSchema = new Schema<IPayment>(
       enum: ['CARD', 'CASH', 'BANK', 'STRIPE'],
       required: true,
     },
+
     status: {
       type: String,
       enum: ['PENDING', 'SUCCESS', 'FAILED'],
       default: 'PENDING',
     },
     transactionId: { type: String },
+    
     cardDetails: {
       cardHolderName: { type: String },
       last4: { type: String },

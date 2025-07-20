@@ -3,6 +3,7 @@ import { bannerModel, IBanner } from './banner.interface';
 
 const bannerSchema = new Schema<IBanner, bannerModel>(
   {
+    // Note : Only Image field needed for this model (nadir vai)
     name: {
       type: String,
       required: true,

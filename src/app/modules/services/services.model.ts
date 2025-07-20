@@ -13,7 +13,7 @@ const startTimeSchema = new Schema<IStartTime>({
   isBooked: { type: Boolean, default: false },
   status: {
     type: String,
-    enum: ['pending', 'completed', 'accepted', 'rejected', 'cancaled'],
+    enum: ['pending', 'completed', 'accepted', 'rejected', 'canceled'],
     default: 'pending',
   },
 });
@@ -31,10 +31,13 @@ const serviceSchema = new Schema<IService, ServiceModel>(
     name: { type: String, required: true, trim: true },
     description: { type: String, default: '' },
     price: { type: Number, required: true },
+
     category: { type: Schema.Types.ObjectId, ref: 'Category', required: true },
     provider: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+
     image: { type: String, required: false },
     tags: { type: [String], default: [] },
+    
     isActive: { type: Boolean, default: true },
     isTrending: { type: Boolean, default: false },
     isRecommended: { type: Boolean, default: false },

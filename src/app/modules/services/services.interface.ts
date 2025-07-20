@@ -3,7 +3,7 @@ import { Model, Types } from 'mongoose';
 export type IStartTime = {
   start: string;
   isBooked: boolean;
-  status: 'pending' | 'accepted' | 'completed' | 'rejected' | 'cancaled';
+  status: 'pending' | 'accepted' | 'completed' | 'rejected' | 'canceled';
 }
 
 export type IAvailability = {
